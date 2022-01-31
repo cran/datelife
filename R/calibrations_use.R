@@ -6,7 +6,7 @@
 #'   `calibrations`, using the algorithm specified in the argument `dating_method`.
 #' @inherit use_calibrations details
 #' @param phy A `phylo` object to use as tree topology.
-#' @param calibrations A `datelifeCalibrations` object, an output of [get_all_calibrations()].
+#' @param calibrations A `congruifiedCalibrations` object, an output of [get_all_calibrations()].
 #' @inheritParams extract_calibrations_phylo
 ## extract_calibrations_phylo has param each
 #' @param dating_method Tree dating algorithm to use. Options are "bladj" or "pathd8"
@@ -14,7 +14,7 @@
 #'   \doi{10.1080/10635150701613783}).
 #' @inheritDotParams use_calibrations
 #' @return A `phylo` or `multiPhylo` object with branch lengths proportional to time.
-#' @inheritSection use_calibrations output
+#' @inheritSection use_calibrations More
 #' @inherit use_calibrations details
 #' @references
 #' Webb, C. O., Ackerly, D. D., & Kembel, S. W. (2008). "Phylocom: software for
@@ -67,7 +67,7 @@ use_all_calibrations <- function(phy = NULL,
 #' @inheritDotParams use_calibrations
 # #' @param ... Arguments to pass to \code{use_calibrations}.
 #' @return A `multiPhylo` object of trees with branch lengths proportional to time.
-#' @inheritSection use_calibrations output
+#' @inheritSection use_calibrations More
 #' @inherit use_calibrations details
 #' @export
 # You can get the datelifeResult object or the list of chronograms first
@@ -88,7 +88,7 @@ use_calibrations_each <- function(phy = NULL,
 
   # date the tree with bladj, or pathd8 if branch lengths:
   if (inherits(calibrations, "data.frame")) {
-    calibrations <- structure(list(calibrations), class = c("list", "datelifeCalibrations"))
+    calibrations <- structure(list(calibrations), class = c("list", "congruifiedCalibrations"))
   }
   chronograms <- lapply(calibrations, function(x) {
     use_calibrations(
@@ -114,7 +114,7 @@ use_calibrations_each <- function(phy = NULL,
 # use_calibrations_bladj has param type
 #' @inheritDotParams use_calibrations_pathd8
 #' @return A `phylo` object with branch lengths proportional to time.
-#' @section output: The output object stores the used `calibrations` and `dating_method` as
+#' @section More: The output object stores the used `calibrations` and `dating_method` as
 #'   `attributes(output)$datelife_calibrations` and `attributes(output)$dating_method`.
 #' @details
 #' If `phy` has no branch lengths, `dating_method` is ignores, and the function applies secondary

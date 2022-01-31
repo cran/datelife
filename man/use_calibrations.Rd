@@ -15,7 +15,7 @@ use_calibrations(
 \arguments{
 \item{phy}{A \code{phylo} object to use as tree topology.}
 
-\item{calibrations}{A \code{datelifeCalibrations} object, an output of \code{\link[=get_all_calibrations]{get_all_calibrations()}}.}
+\item{calibrations}{A \code{congruifiedCalibrations} object, an output of \code{\link[=get_all_calibrations]{get_all_calibrations()}}.}
 
 \item{dating_method}{Tree dating algorithm to use. Options are "bladj" or "pathd8"
 (Webb et al., 2008, \doi{10.1093/bioinformatics/btn358}; Britton et al., 2007,
@@ -44,7 +44,7 @@ If \code{phy} has no branch lengths, \code{dating_method} is ignores, and the fu
 calibrations to date the tree with the BLADJ algorithm. See \code{\link[=make_bladj_tree]{make_bladj_tree()}} and \code{\link[=use_calibrations_bladj]{use_calibrations_bladj()}}.
 If \code{phy} has branch lengths, the function can use the PATHd8 algorithm. See \code{\link[=use_calibrations_pathd8]{use_calibrations_pathd8()}}.
 }
-\section{output}{
+\section{More}{
  The output object stores the used \code{calibrations} and \code{dating_method} as
 \code{attributes(output)$datelife_calibrations} and \code{attributes(output)$dating_method}.
 }

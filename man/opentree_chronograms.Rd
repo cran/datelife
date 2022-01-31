@@ -9,7 +9,7 @@ A list of four elements, containing data from OpenTree of Life chronograms
 \describe{
 \item{authors}{A list of lists of author names of the original studies that
 published chronograms in the Open Tree of Life database.}
-\item{curators}{A list of lists of curator names that uplodaded chronograms
+\item{curators}{A list of lists of curator names that uploaded chronograms
 to the Open Tree of Life database.}
 \item{studies}{A list of study identifiers.}
 \item{trees}{A \code{multiPhylo} object storing the chronograms from Open Tree of
@@ -27,7 +27,7 @@ Now storing >200 chronograms from Open Tree of Life
 }
 \details{
 Generated with
-opentree_chronograms <- get_otol_chronograms()
+opentree_chronograms <- get_opentree_chronograms()
 usethis::use_data(opentree_chronograms, overwrite = T)
 and updated with update_datelife_cache()
 }

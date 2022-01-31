@@ -33,7 +33,7 @@ library(datelife)
 #  my_datelife_query <- datelife::make_datelife_query(input = phylo)
 #  #> ... Making a DateLife query.
 #  #> ... Phylo-processing 'input'.
-#  #> 'input' is a phylogeny and it is correcly formatted.
+#  #> 'input' is a phylogeny and it is correctly formatted.
 #  #> DateLife query done!
 
 ## ---- eval = FALSE------------------------------------------------------------

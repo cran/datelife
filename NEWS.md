@@ -1,17 +1,27 @@
+# datelife 0.6.1
+  - Functions:
+    - `get_otol_chronograms` was updated and renamed to `get_opentree_chronograms`
+    - Update `match_all_calibrations`
+    - Added a `summary` method for `datelifeResult` objects
+  - Documentation:
+    - Added a "More" section describing return value attributes (will rename to "Attributes")
+    - Eliminated unnecessary examples
+  - Vignettes: added case study vignette
+  - Description: added `BiocManager` package to imports
+
 # datelife 0.6.0
 
-  - Bioconductor packages are used conditionally
+  - Dependencies: Bioconductor packages are used conditionally
   - Package website with `pkgdown`
-  - Open Tree of Life cached chronogram database was updated
-  - get_otol_chronograms was updated and renamed to get_opentree_chronogram
-  - documentation for all functions was expanded
+  - documentation: expanded for all functions
   - examples and function files are written to tempdir()
 
 # datelife 0.5.0
 
-  - `datelife_query_check` is deprecated
-  - `use_each_calibration` is now `use_calibrations_each`
-  - Plotting functions have been moved to datelifeplot package
+  - functions:
+    - `datelife_query_check` is deprecated
+    - `use_each_calibration` renamed to `use_calibrations_each`
+    - plotting functions have been moved to `datelifeplot` package
 
 # datelife 0.3.1
 

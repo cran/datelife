@@ -27,9 +27,9 @@ in separate data frames.}
 \item{...}{
   Arguments passed on to \code{\link[=make_datelife_query]{make_datelife_query}}
   \describe{
-    \item{\code{use_tnrs}}{Whether to use OpenTree's Taxonomic Name Resolution Service (TNRS)
+    \item{\code{use_tnrs}}{Whether to use Open Tree of Life's Taxonomic Name Resolution Service (TNRS)
 to process input taxon names. Default to \code{TRUE}, it corrects misspellings and
-taxonomic name variations.}
+taxonomic name variations with \code{\link[=tnrs_match]{tnrs_match()}}, a wrapper of \code{\link[rotl:tnrs_match_names]{rotl::tnrs_match_names()}}.}
     \item{\code{get_spp_from_taxon}}{Whether to search ages for all species belonging to a
 given taxon or not. Default to \code{FALSE}. If \code{TRUE}, it must have same length as input.
 If input is a newick string with some clades it will be converted to a \code{phylo}
@@ -40,9 +40,9 @@ object, and the order of \code{get_spp_from_taxon} will match \code{phy$tip.labe
 A \code{phylo} or \code{multiPhylo} object with branch lengths proportional to time.
 }
 \description{
-The function gets secondary calibrations available for any
-pair of given taxon names, mined from code{\link[=opentree_chronograms]{opentree_chronograms}}
-local DateLife database, and uses them to date a given tree topology with the
+\code{datelife_use} gets secondary calibrations available for any
+pair of given taxon names, mined from the \link{opentree_chronograms} object,
+and uses them to date a given tree topology with the
 algorithm defined in \code{dating_method}. If no tree topology is provided,
 it will attempt to get one for the given taxon names by calling the function \code{\link[=make_bold_otol_tree]{make_bold_otol_tree()}}.
 }
@@ -52,7 +52,7 @@ tree with \code{\link[=make_bold_otol_tree]{make_bold_otol_tree()}} to get a tre
 it will get an Open Tree of Life synthetic tree topology.
 The function then calls \code{\link[=use_calibrations]{use_calibrations()}}.
 }
-\section{output}{
+\section{More}{
  The output object stores the used \code{calibrations} and \code{dating_method} as
 \code{attributes(output)$datelife_calibrations} and \code{attributes(output)$dating_method}.
 }

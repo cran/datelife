@@ -28,7 +28,7 @@ Defaults to temporary directory obtained with \code{\link[base:tempfile]{base::t
 \code{\link[base:file.path]{base::file.path()}}.}
 
 \item{...}{
-  Arguments passed on to \code{\link[=get_otol_chronograms]{get_otol_chronograms}}
+  Arguments passed on to \code{\link[=get_opentree_chronograms]{get_opentree_chronograms}}
   \describe{
     \item{\code{max_tree_count}}{Default to "all", it gets all available chronograms. For testing purposes, a numeric value indicating the max number of trees to be cached.}
   }}
@@ -38,7 +38,7 @@ A list of 4 elements:
 \describe{
 \item{authors}{A list of lists of author names of the original studies that
 published chronograms currently stored in the Open Tree of Life database.}
-\item{curators}{A list of lists of curator names that uplodaded chronograms
+\item{curators}{A list of lists of curator names that uploaded chronograms
 to the Open Tree of Life database.}
 \item{studies}{A list of study identifiers from original studies that
 published chronograms currently stored in the Open Tree of Life database.}
@@ -47,7 +47,7 @@ Life database.}
 }
 }
 \description{
-The function calls \code{\link[=get_otol_chronograms]{get_otol_chronograms()}} to update the OpenTree
+The function calls \code{\link[=get_opentree_chronograms]{get_opentree_chronograms()}} to update the OpenTree
 chronograms database cached in datelife. It has the option to write the updated
 object as an .Rdata file, that will be independent of the \code{opentree_chronograms}
 data object that you can load with \code{data("opentree_chronograms", package = "datelife")}.

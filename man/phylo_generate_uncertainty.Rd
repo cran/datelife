@@ -2,7 +2,7 @@
 % Please edit documentation in R/uncertainty.R
 \name{phylo_generate_uncertainty}
 \alias{phylo_generate_uncertainty}
-\title{Function to generate uncertainty in branch lengths using a lognormal}
+\title{Generate uncertainty in branch lengths using a lognormal.}
 \usage{
 phylo_generate_uncertainty(
   phy,
@@ -17,7 +17,7 @@ phylo_generate_uncertainty(
 )
 }
 \arguments{
-\item{phy}{The input tree}
+\item{phy}{A \code{phylo} object.}
 
 \item{size}{A numeric vector indicating the number of samples to be generated.}
 
@@ -48,20 +48,25 @@ Where min_age = 0.9 * mean age, and max_age = 1.1 * mean age.}
 A phylo or multiPhylo object with the same topology as phy but different branch lengths
 }
 \description{
-Function to generate uncertainty in branch lengths using a lognormal
+Generate uncertainty in branch lengths using a lognormal.
 }
 \details{
 If you want to change the size of sampled trees you do not need to run mrbayes again.
 Just use sample_trees("mrbayes_trees_file_directory", size = new_size) and you will get a multiPhylo object with a new tree sample.
 }
 \examples{
-# Generate uncertainty over feline species SDM chronogram
-# Load data
+# Generate uncertainty over feline species SDM chronogram.
+# Load the data:
+
 data(felid_sdm)
-# by default, generates a sample of 100 trees with var = 0.1
+
+# By default, generates a sample of 100 trees with var = 0.1:
+
 unc <- phylo_generate_uncertainty(felid_sdm$phy)
 length(unc)
-# ltt plot:
+
+# Make an LTT plot:
+
 max_age <- max(sapply(unc, ape::branching.times))
 ape::ltt.plot(phy = unc[[1]], xlim = c(-max_age, 0), col = "#cce5ff50")
 for (i in 2:100) {
