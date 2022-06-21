@@ -7,9 +7,9 @@
 summary_matrix_to_phylo(
   summ_matrix,
   datelife_query = NULL,
+  target_tree = NULL,
   total_distance = TRUE,
   use = "mean",
-  target_tree = NULL,
   ...
 )
 }
@@ -18,30 +18,28 @@ summary_matrix_to_phylo(
 
 \item{datelife_query}{A \code{datelifeQuery} object, usually an output of \code{\link[=make_datelife_query]{make_datelife_query()}}.}
 
-\item{total_distance}{Boolean. If \code{TRUE} it will divide the matrix in half, if
-\code{FALSE} it will take it as is.}
-
-\item{use}{A character vector indicating what type of age to use for summary.
-One of the following:
-\describe{
-\item{mean}{It will use the mean of the node age distributions.}
-\item{min}{It will use the minimum age from the node age distributions.}
-\item{max}{Choose this if you wanna be conservative; it will use the maximum
-age from the node age distributions.}
-}}
-
 \item{target_tree}{A \code{phylo} object. Use this in case you want a specific
 backbone for the output tree.}
 
+\item{total_distance}{Whether the input \code{summ_matrix} stores total age distance
+(from tip to tip) or distance from node to tip. Default to \code{TRUE},
+divides the matrix in half, if \code{FALSE} it will take it as is.}
+
+\item{use}{A character vector indicating what type of age to use for summary tree.
+One of the following:
+\describe{
+\item{"mean"}{It will use the \code{\link[=mean]{mean()}} of the node ages in \code{summ_matrix}.}
+\item{"median"}{It uses the \code{\link[stats:median]{stats::median()}} age of node ages in \code{summ_matrix}.}
+\item{"min"}{It will use the \code{\link[=min]{min()}} age from node ages in \code{summ_matrix}.}
+\item{"max"}{Choose this if you wanna be conservative; it will use the \code{\link[=max]{max()}}
+age from node ages in \code{summ_matrix}.}
+\item{"midpoint"}{It will use the mean of minimum age and maximum age.}
+}}
+
 \item{...}{
-  Arguments passed on to \code{\link[=get_otol_synthetic_tree]{get_otol_synthetic_tree}}
+  Arguments passed on to \code{\link[=summary_matrix_to_phylo_all]{summary_matrix_to_phylo_all}}
   \describe{
-    \item{\code{otol_version}}{Version of Open Tree of Life to use}
-    \item{\code{resolve}}{Defaults to \code{TRUE}. Whether to resolve the tree at random or not.}
-    \item{\code{input}}{Optional. A character vector of names or a \code{datelifeQuery} object.}
-    \item{\code{ott_ids}}{If not NULL, it takes this argument and ignores input. A
-numeric vector of ott ids obtained with \code{\link[rotl:taxonomy_taxon_info]{rotl::taxonomy_taxon_info()}} or
-\code{\link[rotl:tnrs_match_names]{rotl::tnrs_match_names()}} or \code{\link[=tnrs_match]{tnrs_match()}}.}
+    \item{\code{}}{}
   }}
 }
 \value{

@@ -25,6 +25,7 @@
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -318,9 +319,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div id="what-can-you-do-with-datelife" class="section level2">
-<h2>What can you do with <code>datelife</code>?</h2>
-<p>The aim of the <code>datelife</code> R package is to allow researchers and the general audience to obtain open scientific data on ages for their organisms of interest. These age data is extracted from dated phylogenetic trees (chronograms) that have been published and peer-reviewed in association with a scientific article in an indexed journal. As such, the age data provided by <code>datelife</code> constitutes state-of-the-art, peer-reviewed, public scientific knowledge, that can be accessed by experts and non-experts in the field alike.</p>
+<div id="what-can-you-get-with-datelife" class="section level2">
+<h2>What can you get with <code>datelife</code>?</h2>
 <p>As a <code>datelife</code> user, you can get age data for your organisms of interest in several forms:</p>
 <ul>
 <li><p><strong>MRCA</strong>: Get the age of the most recent common ancestor (MRCA) of your organisms.</p></li>
@@ -330,8 +330,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </ul>
 <p>You can also apply the obtained age data to date a phylogenetic tree topology of your organisms of interest.</p>
 </div>
-<div id="processing-your-organism-names" class="section level2">
-<h2>1. Processing your organism names</h2>
+<div id="how-do-you-use-datelife-to-get-these-data" class="section level2">
+<h2>How do you use <code>datelife</code> to get these data?</h2>
+<div id="processing-your-organism-names" class="section level3">
+<h3>1. Processing your organism names</h3>
 <p>The function <code>make_datelife_query</code> processes the taxon names of your organisms of interest and structures them as a <code>datelifeQuery</code> object.</p>
 <p>A <code>datelifeQuery</code> object is a list of three elements:</p>
 <ul>
@@ -341,8 +343,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </ul>
 <p>This allows us to straightforwardly use the processed taxon names later to perform a search for ages across the <code>datelife</code> chronogram database as well as other downstream analyses.</p>
 <p>There are two alternative ways of processing organism names with <code>datelife</code>:</p>
-<div id="a-from-a-set-of-organism-taxonomic-names" class="section level3">
-<h3>a) From a set of organism taxonomic names</h3>
+<div id="a-from-a-set-of-organism-taxonomic-names" class="section level4">
+<h4>a) From a set of organism taxonomic names</h4>
 <p>You can provide the taxon names as a character vector or as a single comma separated string of names. For example, running the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">datelife<span class="op">::</span><span class="kw">make_datelife_query</span>(<span class="dt">input =</span> <span class="kw">c</span>(<span class="st">&quot;Delphinus_delphis&quot;</span>,</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">                                        <span class="st">&quot;Gallus gallus&quot;</span>,</a>
@@ -394,6 +396,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
 </details>
 <p>Note that you can use underscores or spaces to separate binomial scientific names and <code>datelife</code> will process them the same.</p>
+</div>
 </div>
 <div id="b-from-a-tree-with-organism-taxonomic-names-as-tip-labels" class="section level3">
 <h3>b) From a tree with organism taxonomic names as tip labels</h3>
@@ -460,9 +463,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; 'input' is a phylogeny and it is correctly formatted.</span></a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; DateLife query done!</span></a></code></pre></div>
 </div>
-</div>
-<div id="searching-the-chronogram-database" class="section level2">
-<h2>2. Searching the chronogram database</h2>
+<div id="searching-the-chronogram-database" class="section level3">
+<h3>2. Searching the chronogram database</h3>
 <p>The <code>datelife_search</code> function takes a <code>datelifeQuery</code> object and goes through the <code>datelife</code> chronogram database to find all chronograms matching at least two taxon names:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">datelife<span class="op">::</span><span class="kw">datelife_search</span>(<span class="dt">input =</span> my_datelife_query)</a></code></pre></div>
 <details>
@@ -488,9 +490,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb11-19" data-line-number="19"><span class="co">#&gt; 4 phylogenetic trees</span></a></code></pre></div>
 </details>
 </div>
-<div id="summarizing-chronogram-search-results" class="section level2">
-<h2>3. Summarizing chronogram search results</h2>
+<div id="summarizing-chronogram-search-results" class="section level3">
+<h3>3. Summarizing chronogram search results</h3>
 <p><code>datelife_search</code> will also summarize results from the chronogram database search for you. By default, it will give you all original chronograms matching the search, as a <code>phylo</code> or <code>multiPhylo</code> object. You can specify the format you desire for the summary of results with the argument <code>summary_format</code>. There are different summary formats to choose from:</p>
+</div>
 <div id="citations" class="section level3">
 <h3>Citations</h3>
 <p><code>summary_format = &quot;citations&quot;</code> gives back the study citations from all original chronograms matching your search:</p>
@@ -1103,6 +1106,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb33-27" data-line-number="27"><span class="co">#&gt; 3                                                               ((Felis_silvestris:89.8,Delphinus_delphis:89.8):21,Elephas_maximus:110.8);</span></a>
 <a class="sourceLine" id="cb33-28" data-line-number="28"><span class="co">#&gt; 4 ((Elephas_maximus:105.009658,(Felis_silvestris:78.392518,Delphinus_delphis:78.392517):26.617141):215.5141645,Gallus_gallus:320.5238235);</span></a></code></pre></div>
 </details>
+<!--TODO: add something about NJ, why is this happening
+
+One can use a clustering method like Neighbor Joining (NJ). While we implemented this method in the package, because NJ are greedy algorithms they do not perform well and often return topologies that are not biologically plausible. Hence, we implement
+a different workflow, -->
 </div>
 </div>
 

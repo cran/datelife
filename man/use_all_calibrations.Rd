@@ -2,7 +2,7 @@
 % Please edit documentation in R/calibrations_use.R
 \name{use_all_calibrations}
 \alias{use_all_calibrations}
-\title{Date a given tree topology using a given set of calibrations}
+\title{Date a given tree topology using a given set of congruified calibrations or ages}
 \usage{
 use_all_calibrations(
   phy = NULL,
@@ -15,7 +15,7 @@ use_all_calibrations(
 \arguments{
 \item{phy}{A \code{phylo} object to use as tree topology.}
 
-\item{calibrations}{A \code{congruifiedCalibrations} object, an output of \code{\link[=get_all_calibrations]{get_all_calibrations()}}.}
+\item{calibrations}{A \code{calibrations} object, an output of \code{\link[=get_all_calibrations]{get_all_calibrations()}}.}
 
 \item{each}{Boolean, default to \code{FALSE}: all calibrations are returned in
 the same \code{data.frame}. If \code{TRUE}, calibrations from each chronogram are returned

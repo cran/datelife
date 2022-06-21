@@ -1,4 +1,4 @@
-#' Date a given tree topology using a given set of calibrations
+#' Date a given tree topology using a given set of congruified calibrations or ages
 #'
 #' @description `use_all_calibrations` generates one or multiple chronograms
 #'   (i.e., phylogenetic trees with branch lengths proportional to time) by dating
@@ -6,7 +6,7 @@
 #'   `calibrations`, using the algorithm specified in the argument `dating_method`.
 #' @inherit use_calibrations details
 #' @param phy A `phylo` object to use as tree topology.
-#' @param calibrations A `congruifiedCalibrations` object, an output of [get_all_calibrations()].
+#' @param calibrations A `calibrations` object, an output of [get_all_calibrations()].
 #' @inheritParams extract_calibrations_phylo
 ## extract_calibrations_phylo has param each
 #' @param dating_method Tree dating algorithm to use. Options are "bladj" or "pathd8"
@@ -88,7 +88,7 @@ use_calibrations_each <- function(phy = NULL,
 
   # date the tree with bladj, or pathd8 if branch lengths:
   if (inherits(calibrations, "data.frame")) {
-    calibrations <- structure(list(calibrations), class = c("list", "congruifiedCalibrations"))
+    calibrations <- structure(list(calibrations), class = c("list", "calibrations"))
   }
   chronograms <- lapply(calibrations, function(x) {
     use_calibrations(
@@ -167,8 +167,7 @@ use_calibrations <- function(phy = NULL,
       chronogram <- use_calibrations_pathd8(phy, calibrations, ...)
     }
   }
-  # TODO
-  # add dating_method attribute to chronogram
+  # add dating_method and calibrations attribute to chronogram
   attr(chronogram, "datelife_calibrations") <- calibrations
   attr(chronogram, "dating_method") <- dating_method
   class(chronogram) <- c(class(chronogram), "datelife")

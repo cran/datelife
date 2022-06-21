@@ -1,3 +1,23 @@
+<!--TODO:
+  - add congruification step to `datelife_use` functions
+
+DONE:
+-->
+
+# datelife 0.6.5
+  - data: 
+    - updated `opentree_chronograms` object. It now has 253 chronograms from Open Tree of Life and uses "xz" compression. 
+  - examples: 
+    - set to not test examples
+  - functions:
+    - added functions `matrix_to_table` and `matrices_to_table` that go from a matrix of patristic distances to a table of taxon name pairs and respective node ages.
+    - bug fix on `use_calibrations_bladj` that used element $present_calibrations instead of $matched_calibrations
+    - `get_otol_chronogram` is another name to call `get_opentree_chronograms`
+    - added taxonomic source options argument to `make_datelife_query`. You can choose from OTT, NCBI, IRMNG and GBIF.
+    - function `congruify_and_mrca`: output has congruified topology with nodelables as attribute.
+    - `use_calibrations_bladj` takes an output of `congruify_and_mrca` functions.
+  - added function method `congruify_and_mrca`
+
 # datelife 0.6.1
   - Functions:
     - `get_otol_chronograms` was updated and renamed to `get_opentree_chronograms`
@@ -15,6 +35,7 @@
   - Package website with `pkgdown`
   - documentation: expanded for all functions
   - examples and function files are written to tempdir()
+  - function rename: `get_biggest_phylo` to `get_biggest_multiphylo`
 
 # datelife 0.5.0
 

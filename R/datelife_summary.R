@@ -345,8 +345,7 @@ summarize_datelife_result <- function(datelife_result = NULL,
 }
 
 
-#' Get the tree with the most tips: the biggest tree.
-#'
+#' Get the tree with the most tips from a multiPhylo object: the biggest tree.
 #'
 #' @param trees A list of trees as `multiPhylo` or as a generic `list` object.
 #' @return The largest tree from those given in `trees`, as a `phylo` object with an additional `$citation` element containing the reference of the original publication.
@@ -364,12 +363,14 @@ get_biggest_multiphylo <- function(trees) {
     return.object <- return.object[which.min(abs(tree.depths - stats::median(tree.depths)))]
     tree_citation <- tree_citation[which.min(abs(tree.depths - stats::median(tree.depths)))]
   }
-  if (class(return.object) != "phylo") {
+  if (!inherits(return.object, "phylo")) {
     return.object <- return.object[[1]]
   }
   return.object$citation <- tree_citation
   return.object
 }
+
+get_biggest_phylo <- get_biggest_multiphylo
 
 # TODO: choose from patristic matrix, not phylo objects, it will be faster.
 # get_biggest_datelife_result

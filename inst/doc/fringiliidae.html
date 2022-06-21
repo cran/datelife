@@ -12,7 +12,7 @@
 
 
 
-<title>Case study: the Fringillidae</title>
+<title>Case study: the true finches</title>
 
 
 <style type="text/css">
@@ -23,6 +23,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -314,13 +315,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Case study: the Fringillidae</h1>
+<h1 class="title toc-ignore">Case study: the true finches</h1>
 
 
 
-<div id="processing-fringillidae-names" class="section level2">
-<h2>1. Processing Fringillidae names</h2>
-<p>Get all species names belonging to the family using the flag <code>get_spp_from_taxon = TRUE</code>:</p>
+<p>The family Fringillidae is a taxon that includes the true finches. Let’s see what is known about their time of divergence.</p>
+<div id="getting-species-names-within-the-family-fringillidae" class="section level2">
+<h2>1. Getting species names within the family Fringillidae</h2>
+<p>DateLife searches its chronogram database using species names standardized to a <a href="https://tree.opentreeoflife.org/about/taxonomy-version/ott3.3">unified taxonomy</a> constructed by the Open Tree of Life project.</p>
+<p>When working with taxon names above the species level in DateLife, the first step is to obtain all species names belonging to the taxon of interest.</p>
+<p>We will get all species names belonging to the family Fringillidae, using the flag <code>get_spp_from_taxon = TRUE</code> from the function <code>datelife::make_datelife_query()</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">dquery &lt;-<span class="st"> </span>datelife<span class="op">::</span><span class="kw">make_datelife_query</span>(<span class="dt">input =</span> <span class="st">&quot;fringillidae&quot;</span>,               </a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">                                   <span class="dt">get_spp_from_taxon =</span> <span class="ot">TRUE</span>)</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"></a>
@@ -345,7 +349,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;   ..- attr(*, &quot;names&quot;)= chr [1:289] &quot;Crithagra sulphurata&quot; &quot;Crithagra #&gt; citrinelloides&quot; &quot;Crithagra mozambica&quot; &quot;Crithagra capistrata&quot; ...</span></a>
 <a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  $ phy          : logi NA</span></a>
 <a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  - attr(*, &quot;class&quot;)= chr &quot;datelifeQuery&quot;</span></a></code></pre></div>
-<p>We have 289 species names in the family Fringillidae and we did not provide an input tree, so <code>$phy</code> is <code>NA</code>.</p>
+<p>We have 289 species names belonging to the family Fringillidae according to OpenTree’s unified taxonomy. We did not provide an input tree, so <code>$phy</code> is <code>NA</code>.</p>
 </div>
 <div id="search-the-species-names-across-a-chronogram-database" class="section level2">
 <h2>2. Search the species names across a chronogram database</h2>
@@ -357,7 +361,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; ... Searching the chronogram database.</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; Search done!</span></a>
 <a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt;</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Input taxon names were found in 13 chronograms.</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Input taxon names were found in 19 chronograms.</span></a></code></pre></div>
 <p>Results from the chronogram search are returned as a <code>datelifeResult</code> object, which is a named list of patristic matrices. Each element of the list corresponds to a chronogram that has been translated to a distance matrix or patristic matrix. The main reason for this is that pruning is much faster on a matrix than on a <code>phylo</code> object:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">class</span>(dres)</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; [1] &quot;datelifeResult&quot;</span></a>
@@ -365,65 +369,101 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb5-4" data-line-number="4"><span class="kw">typeof</span>(dres)</a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; [1] &quot;list&quot;</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="kw">names</span>(dres)</a></code></pre></div>
-<details>
-<p><summary>names on our <code>datelifeResult</code> object</summary></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co">#&gt; [1] &quot;Hooper, Daniel M., Trevor D. Price. 2017. Chromosomal inversion differences correlate with range overlap in passerine birds. Nature Ecology &amp; Evolution 1 (10): 1526-1534&quot;</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="kw">class</span>(dres[[<span class="dv">1</span>]])</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; [1] &quot;matrix&quot; &quot;array&quot;</span></a></code></pre></div>
+<p>Names on your <code>datelifeResult</code> object correspond to study citations from source chronograms:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">names</span>(dres)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; [2] &quot;Hedges, S. Blair, Julie Marin, Michael Suleski, Madeline Paymer, Sudhir Kumar. 2015. Tree of life reveals clock-like speciation and diversification. Molecular Biology and Evolution 32 (4): 835-845&quot;</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; [3] &quot;Hedges, S. Blair, Julie Marin, Michael Suleski, Madeline Paymer, Sudhir Kumar. 2015. Tree of life reveals clock-like speciation and diversification. Molecular Biology and Evolution 32 (4): 835-845&quot;</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; [4] &quot;Claramunt, Santiago, Joel Cracraft. 2015. A new time tree reveals Earth historys imprint on the evolution of modern birds. Science Advances 1 (11): e1501005-e1501005&quot;</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; [5] &quot;Gibb, Gillian C., Ryan England, Gerrit Hartig, P.A. (Trish) McLenachan, Briar L. Taylor Smith, Bennet J. McComish, Alan Cooper, David Penny. 2015. New Zealand passerines help clarify the diversification of major songbird lineages during the Oligocene. Genome Biology and Evolution 7 (11): 2983-2995.&quot;</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; [6] &quot;Barker, F. Keith, Kevin J. Burns, John Klicka, Scott M. Lanyon, Irby J. Lovette. 2015. New insights into New World biogeography: An integrated view from the phylogeny of blackbirds, cardinals, sparrows, tanagers, warblers, and allies. The Auk 132 (2): 333-348.&quot;</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; [7] &quot;Barker, F. Keith, Kevin J. Burns, John Klicka, Scott M. Lanyon, Irby J. Lovette. 2015. New insights into New World biogeography: An integrated view from the phylogeny of blackbirds, cardinals, sparrows, tanagers, warblers, and allies. The Auk 132 (2): 333-348.&quot;</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; [8] &quot;Jetz, W., G. H. Thomas, J. B. Joy, K. Hartmann, A. O. Mooers. 2012. The global diversity of birds in space and time. Nature 491 (7424): 444-448&quot;</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; [9] &quot;Jetz, W., G. H. Thomas, J. B. Joy, K. Hartmann, A. O. Mooers. 2012. The global diversity of birds in space and time. Nature 491 (7424): 444-448&quot;</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; [10] &quot;Barker, F. K., K. J. Burns, J. Klicka, S. M. Lanyon, I. J. Lovette. 2013. Going to extremes: contrasting rates of diversification in a recent radiation of New World passerine birds. Systematic Biology 62 (2): 298-320.&quot;</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; [11] &quot;Burns, Kevin J., Allison J. Shultz, Pascal O. Title, Nicholas A. Mason, F. Keith Barker, John Klicka, Scott M. Lanyon, Irby J. Lovette. 2014. Phylogenetics and diversification of tanagers (Passeriformes: Thraupidae), the largest radiation of Neotropical songbirds. Molecular Phylogenetics and Evolution 75: 41-77.&quot;</span></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; [12] &quot;Price, Trevor D., Daniel M. Hooper, Caitlyn D. Buchanan, Ulf S. Johansson, D. Thomas Tietze, Per Alström, Urban Olsson, Mousumi Ghosh-Harihar, Farah Ishtiaq, Sandeep K. Gupta, Jochen Martens, Bettina Harr, Pratap Singh, Dhananjai Mohan. 2014. Niche filling slows the diversification of Himalayan songbirds. Nature 509: 222-225.&quot;</span></a>
-<a class="sourceLine" id="cb6-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt; [13] &quot;Price, Trevor D., Daniel M. Hooper, Caitlyn D. Buchanan, Ulf S. Johansson, D. Thomas Tietze, Per Alström, Urban Olsson, Mousumi Ghosh-Harihar, Farah Ishtiaq, Sandeep K. Gupta, Jochen Martens, Bettina Harr, Pratap Singh, Dhananjai Mohan. 2014. Niche filling slows the diversification of Himalayan songbirds. Nature 509: 222-225.&quot;</span></a></code></pre></div>
-</details>
-<pre><code>class(dres[[1]])
-#&gt; [1] &quot;matrix&quot; &quot;array&quot;</code></pre>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; [1] &quot;Hooper, Daniel M., Trevor D. Price. 2017. Chromosomal inversion differences correlate with range overlap in passerine birds. Nature Ecology &amp; Evolution 1 (10): 1526-1534&quot;                                                                                                                                                              </span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; [2] &quot;Roquet, C., Lavergne, S., &amp; Thuiller, W. (2014). One Tree to Link Them All: A Phylogenetic Dataset for the European Tetrapoda. PLoS Currents. doi:10.1371/currents.tol.5102670fff8aa5c918e78f5592790e48\n&quot;                                                                                                                              </span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; [3] &quot;Roquet, C., Lavergne, S., &amp; Thuiller, W. (2014). One Tree to Link Them All: A Phylogenetic Dataset for the European Tetrapoda. PLoS Currents. doi:10.1371/currents.tol.5102670fff8aa5c918e78f5592790e48\n&quot;                                                                                                                              </span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; [4] &quot;Oliveros, C. H., Field, D. J., Ksepka, D. T., Barker, F. K., Aleixo, A., Andersen, M. J., … Faircloth, B. C. (2019). Earth history and the passerine superradiation. Proceedings of the National Academy of Sciences, 116(16), 7916–7925. doi:10.1073/pnas.1813206116\n&quot;                                                                </span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; [5] &quot;Kimball, R. T., Oliveros, C. H., Wang, N., White, N. D., Barker, F. K., Field, D. J., … Braun, E. L. (2019). A Phylogenomic Supertree of Birds. Diversity, 11(7), 109. doi:10.3390/d11070109\n&quot;                                                                                                                                         </span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; [6] &quot;Kimball, R. T., Oliveros, C. H., Wang, N., White, N. D., Barker, F. K., Field, D. J., … Braun, E. L. (2019). A Phylogenomic Supertree of Birds. Diversity, 11(7), 109. doi:10.3390/d11070109\n&quot;                                                                                                                                         </span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; [7] &quot;Uyeda, J. C., Pennell, M. W., Miller, E. T., Maia, R., &amp; McClain, C. R. (2017). The Evolution of Energetic Scaling across the Vertebrate Tree of Life. The American Naturalist, 190(2), 185–199. doi:10.1086/692326\n&quot;                                                                                                                  </span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; [8] &quot;Hedges, S. Blair, Julie Marin, Michael Suleski, Madeline Paymer, Sudhir Kumar. 2015. Tree of life reveals clock-like speciation and diversification. Molecular Biology and Evolution 32 (4): 835-845&quot;                                                                                                                                   </span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; [9] &quot;Hedges, S. Blair, Julie Marin, Michael Suleski, Madeline Paymer, Sudhir Kumar. 2015. Tree of life reveals clock-like speciation and diversification. Molecular Biology and Evolution 32 (4): 835-845&quot;                                                                                                                                   </span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; [10] &quot;Claramunt, Santiago, Joel Cracraft. 2015. A new time tree reveals Earth historys imprint on the evolution of modern birds. Science Advances 1 (11): e1501005-e1501005&quot;                                                                                                                                                                  </span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; [11] &quot;Gibb, Gillian C., Ryan England, Gerrit Hartig, P.A. (Trish) McLenachan, Briar L. Taylor Smith, Bennet J. McComish, Alan Cooper, David Penny. 2015. New Zealand passerines help clarify the diversification of major songbird lineages during the Oligocene. Genome Biology and Evolution 7 (11): 2983-2995.&quot;                            </span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; [12] &quot;Barker, F. Keith, Kevin J. Burns, John Klicka, Scott M. Lanyon, Irby J. Lovette. 2015. New insights into New World biogeography: An integrated view from the phylogeny of blackbirds, cardinals, sparrows, tanagers, warblers, and allies. The Auk 132 (2): 333-348.&quot;   </span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; [13] &quot;Barker, F. Keith, Kevin J. Burns, John Klicka, Scott M. Lanyon, Irby J. Lovette. 2015. New insights into New World biogeography: An integrated view from the phylogeny of blackbirds, cardinals, sparrows, tanagers, warblers, and allies. The Auk 132 (2): 333-348.&quot;                                                                   </span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; [14] &quot;Jetz, W., G. H. Thomas, J. B. Joy, K. Hartmann, A. O. Mooers. 2012. The global diversity of birds in space and time. Nature 491 (7424): 444-448&quot;                                                                                              </span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; [15] &quot;Jetz, W., G. H. Thomas, J. B. Joy, K. Hartmann, A. O. Mooers. 2012. The global diversity of birds in space and time. Nature 491 (7424): 444-448&quot;                                                                                                                                                                                        </span></a>
+<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt; [16] &quot;Barker, F. K., K. J. Burns, J. Klicka, S. M. Lanyon, I. J. Lovette. 2013. Going to extremes: contrasting rates of diversification in a recent radiation of New World passerine birds. Systematic Biology 62 (2): 298-320.&quot;                                                                                                              </span></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt; [17] &quot;Burns, Kevin J., Allison J. Shultz, Pascal O. Title, Nicholas A. Mason, F. Keith Barker, John Klicka, Scott M. Lanyon, Irby J. Lovette. 2014. Phylogenetics and diversification of tanagers (Passeriformes: Thraupidae), the largest radiation of Neotropical songbirds. Molecular Phylogenetics and Evolution 75: 41-77.&quot;              </span></a>
+<a class="sourceLine" id="cb6-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">#&gt; [18] &quot;Price, Trevor D., Daniel M. Hooper, Caitlyn D. Buchanan, Ulf S. Johansson, D. Thomas Tietze, Per Alström, Urban Olsson, Mousumi Ghosh-Harihar, Farah Ishtiaq, Sandeep K. Gupta, Jochen Martens, Bettina Harr, Pratap Singh, Dhananjai Mohan. 2014. Niche filling slows the diversification of Himalayan songbirds. Nature 509: 222-225.&quot;</span></a>
+<a class="sourceLine" id="cb6-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb6-25" data-line-number="25"><span class="co">#&gt; [19] &quot;Price, Trevor D., Daniel M. Hooper, Caitlyn D. Buchanan, Ulf S. Johansson, D. Thomas Tietze, Per Alström, Urban Olsson, Mousumi Ghosh-Harihar, Farah Ishtiaq, Sandeep K. Gupta, Jochen Martens, Bettina Harr, Pratap Singh, Dhananjai Mohan. 2014. Niche filling slows the diversification of Himalayan songbirds. Nature 509: 222-225.&quot;</span></a></code></pre></div>
 </div>
 <div id="summarizing-a-dateliferesult-object" class="section level2">
 <h2>3. Summarizing a <code>datelifeResult</code> object</h2>
-<p>What if you want to plot all your <code>datelifeResult</code> chronograms as a tree? What if you want a single tree summarizing all your resulting chronograms? The function <code>summary.datelifeResult</code> will get all types of summaries for you:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">dsumm &lt;-<span class="st"> </span><span class="kw">summary</span>(dres)</a>
+<p>What if you want to plot all your <code>datelifeResult</code> chronograms individually? What if you want a single tree summarizing all your source chronograms? The function <code>datelife::summary.datelifeResult()</code> will get all types of summaries for you, so you can access them later:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">dsumm &lt;-<span class="st"> </span><span class="kw">summary</span>(dres, <span class="dt">datelife_query =</span> dquery)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Trying with overlap = 2</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; Success!</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; ... Calculating a median summary chronogram.</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;   |==========================================================| 100%</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;   |==========================================================| 100%</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;   |==========================================================| 100%</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; 1 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; 2 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; 3 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; 4 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; 5 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; 6 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; 7 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">#&gt; 8 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co">#&gt; 9 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-20" data-line-number="20"><span class="co">#&gt; 10 out of 13 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-21" data-line-number="21"><span class="co">#&gt; 12 out of 19 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-22" data-line-number="22"><span class="co">#&gt; 13 out of 19 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-23" data-line-number="23"><span class="co">#&gt; 14 out of 19 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">#&gt; 15 out of 19 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-25" data-line-number="25"><span class="co">#&gt; 16 out of 19 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-26" data-line-number="26"><span class="co">#&gt; 17 out of 19 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-27" data-line-number="27"><span class="co">#&gt; 18 out of 19 chronograms tried:  Failed.</span></a>
+<a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt; 19 out of 19 chronograms tried:  Ok.</span></a>
+<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co">#&gt;  Synthesizing 18 chronograms with SDM</span></a>
+<a class="sourceLine" id="cb7-31" data-line-number="31"><span class="co">#&gt;   |==========================================================| 100%</span></a>
+<a class="sourceLine" id="cb7-32" data-line-number="32"><span class="co">#&gt;   |==========================================================| 100%</span></a>
+<a class="sourceLine" id="cb7-33" data-line-number="33"><span class="co">#&gt;   |==========================================================| 100%</span></a></code></pre></div>
+<p>Now we can explore different age summaries.</p>
+<div id="source-chronograms" class="section level3">
+<h3>3.1 Source chronograms:</h3>
+<p>Chronograms that matched our database search, and that were pruned to contain only the species names we looked for are called source chronograms. These can be accessed as follow:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">dsumm<span class="op">$</span>phylo_all</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; Trying with overlap = 2</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt;</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; Success!</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt;</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; ... Calculating a median summary chronogram.</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt;   |==========================================================| 100%</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt;   |==========================================================| 100%</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt;   |==========================================================| 100%</span></a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; 1 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt; 2 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; 3 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt; 4 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; 5 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; 6 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt; 7 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt; 8 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt; 9 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; 10 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt; 11 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="co">#&gt; 12 out of 13 chronograms tried:  Failed.</span></a>
-<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt; 13 out of 13 chronograms tried:  Ok.</span></a>
-<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt;</span></a>
-<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt;  Synthesizing 12 chronograms with SDM</span></a>
-<a class="sourceLine" id="cb8-26" data-line-number="26"><span class="co">#&gt;   |==========================================================| 100%</span></a>
-<a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co">#&gt;   |==========================================================| 100%</span></a>
-<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co">#&gt;   |==========================================================| 100%</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; 19 phylogenetic trees</span></a></code></pre></div>
+<p>By study name:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">dsumm<span class="op">$</span>phylo_all<span class="op">$</span><span class="st">`</span><span class="dt">Gibb, Gillian C., Ryan England, Gerrit Hartig, P.A. (Trish) McLenachan, Briar L. Taylor Smith, Bennet J. McComish, Alan Cooper, David Penny. 2015. New Zealand passerines help clarify the diversification of major songbird lineages during the Oligocene. Genome Biology and Evolution 7 (11): 2983-2995.</span><span class="st">`</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; Phylogenetic tree with 7 tips and 6 internal nodes.</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; Tip labels:</span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt;   Schoeniclus_spodocephala, Emberiza_tristrami, Emberiza_chrysophrys, #&gt; Emberiza_pusilla, Schoeniclus_aureolus, Serinus_canaria, ...</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; Rooted; includes branch lengths.</span></a></code></pre></div>
+<p>Or, by index position:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">names</span>(dsumm<span class="op">$</span>phylo_all)[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] &quot;Hooper, Daniel M., Trevor D. Price. 2017. Chromosomal inversion differences correlate with range overlap in passerine birds. Nature Ecology &amp; Evolution 1 (10): 1526-1534&quot;</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">dsumm<span class="op">$</span>phylo_all[[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; Phylogenetic tree with 44 tips and 43 internal nodes.</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; Tip labels:</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt;   Peucedramus_taeniatus, Peucaea_botterii, Schoeniclus_spodocephala, #&gt; Schoeniclus_aureolus, Emberiza_chrysophrys, Emberiza_pusilla, ...</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; Rooted; includes branch lengths.</span></a></code></pre></div>
+</div>
 </div>
 
 

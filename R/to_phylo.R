@@ -1,6 +1,6 @@
 #' Convert a patristic matrix to a `phylo` object.
 #'
-#' U`patristic_matrix_to_phylo` us used inside [summarize_datelife_result()].
+#' Function `patristic_matrix_to_phylo` is used inside [summarize_datelife_result()].
 #'
 #' @param patristic_matrix A patristic matrix
 #' @param clustering_method A character vector indicating the method to construct
@@ -306,201 +306,75 @@ choose_cluster <- function(phycluster, clustering_method = "nj") {
     }
   }
 }
-#' Internal function used in summary_matrix_to_phylo().
-#' @inheritParams summary_matrix_to_phylo
-summarize_summary_matrix <- function(summ_matrix) {
-  ages <- tA <- tB <- c()
-  # to compute the final length of the data frame do: ncol(xx)^2 - sum(1:(ncol(xx)-1))
-  # calibrations <- matrix(nrow = ncol(xx)^2 - sum(1:(ncol(xx)-1)), ncol = 3)
-  # identify if SDM matrix has some negative values; extract taxon names:
-  negs <- which(summ_matrix < 0)
-  neg_names <- rownames(summ_matrix)[ceiling(negs / nrow(summ_matrix))]
-  # extract unique ages from summ_matrix:
-  for (i in seq(ncol(summ_matrix))) {
-    ages <- c(ages, summ_matrix[1:i, i])
-    tA <- c(tA, rownames(summ_matrix)[1:i])
-    tB <- c(tB, rep(colnames(summ_matrix)[i], i))
-  }
-  # tA <- gsub(" ", "_", tA)
-  # tB <- gsub(" ", "_", tB)
-  calibrations <- data.frame(Age = ages, taxonA = tA, taxonB = tB, stringsAsFactors = FALSE)
-  calibrations <- calibrations[!is.na(calibrations[, "Age"]), ] # get rid of NaN and NAs
-  calibrations <- calibrations[calibrations[, "Age"] != 0, ] # get rid of 0's
-  calibrations <- calibrations[calibrations[, "Age"] > 0, ] # get rid of negative values too
-  if (any(is.na(calibrations[, "Age"]))) {
-    warning("for some reason there are still NAs in the matrix")
-  }
-  # SDM summary matrix sometimes has negative values, bc ages are transformed to be approximated in a similar way as a linear regression
-  return(calibrations)
-}
+
 #' Go from a summary matrix to an ultrametric `phylo` object.
 #' @param summ_matrix Any summary patristic distance matrix, such as the ones obtained with [datelife_result_sdm_matrix()] or [datelife_result_median_matrix()].
 #' @inheritParams get_taxon_summary
-#' @param total_distance Boolean. If `TRUE` it will divide the matrix in half, if
-#'  `FALSE` it will take it as is.
-#' @param use A character vector indicating what type of age to use for summary.
+#' @param total_distance Whether the input `summ_matrix` stores total age distance
+#'  (from tip to tip) or distance from node to tip. Default to `TRUE`,
+#'  divides the matrix in half, if `FALSE` it will take it as is.
+#' @param use A character vector indicating what type of age to use for summary tree.
 #'  One of the following:
 #' \describe{
-#' 	\item{mean}{It will use the mean of the node age distributions.}
-#' 	\item{min}{It will use the minimum age from the node age distributions.}
-#' 	\item{max}{Choose this if you wanna be conservative; it will use the maximum
-#'        age from the node age distributions.}
+#' 	\item{"mean"}{It will use the [mean()] of the node ages in `summ_matrix`.}
+#' 	\item{"median"}{It uses the [stats::median()] age of node ages in `summ_matrix`.}
+#' 	\item{"min"}{It will use the [min()] age from node ages in `summ_matrix`.}
+#' 	\item{"max"}{Choose this if you wanna be conservative; it will use the [max()]
+#'        age from node ages in `summ_matrix`.}
+#' 	\item{"midpoint"}{It will use the mean of minimum age and maximum age.}
 #' }
 #' @param target_tree A `phylo` object. Use this in case you want a specific
 #'  backbone for the output tree.
-#' @inheritDotParams get_otol_synthetic_tree
+#' @inheritDotParams summary_matrix_to_phylo_all
 #' @return An ultrametric phylo object.
 #' @details It can take a regular patristic distance matrix, but there are simpler
 #'  methods for that implemented in [patristic_matrix_to_phylo()].
 #' @export
 # #' @examples
 # #' summary_matrix_to_phylo(summ_matrix, use = "median")
-summary_matrix_to_phylo <- function(summ_matrix, datelife_query = NULL, total_distance = TRUE, use = "mean", target_tree = NULL, ...) {
-  # enhance: add other methods, besides bladj.
-  # for debugging:
-  # summ_matrix <- subset2_sdm_matrix
-  # summ_matrix <- median_matrix
-  use <- match.arg(use, c("mean", "median", "min", "max"))
-  if (!inherits(summ_matrix, "matrix") & !inherits(summ_matrix, "data.frame")) {
-    message("'summ_matrix' argument is not a matrix")
-    return(NA)
-  }
-  if (!is.null(datelife_query)) {
-    input_ott_match <- suppressMessages(check_ott_input(input = datelife_query))
-    # match inputt_ott_match and unique(c(colnames(summ_matrix), rownames(summ_matrix)))
-    # change the names in target tree to the names from summ_matrix (which are the ones that come from the original query)
-  }
-  # summ_matrix <- data.frame(summ_matrix)
-  # everything up to patristic_matrix_to_phylo ok if it is a data frame too
-  if (inherits(summ_matrix, "data.frame")) {
-    summ_matrix <- as.matrix(summ_matrix)
-    colnames(summ_matrix) <- gsub("\\.", " ", colnames(summ_matrix))
-  }
-  if (total_distance) {
-    summ_matrix <- summ_matrix * 0.5 # bc it's total distance tip to tip
-  }
-  # get a backbone tree:
-  # chronogram <- geiger::PATHd8.phylo(phy_target, calibrations)
-  # try(chronogram <- geiger::PATHd8.phylo(phy_target, calibrations), silent = TRUE)
-  if (!inherits(target_tree, "phylo")) {
-    target_tree <- suppressMessages(get_otol_synthetic_tree(input = colnames(summ_matrix), ...))
-    if (!inherits(target_tree, "phylo")) {
-      # enhance: we should find a better way to do this, but it should be ok for now:
-      target_tree <- suppressWarnings(suppressMessages(patristic_matrix_to_phylo(summ_matrix, ultrametric = TRUE)))
-      # target_tree <- consensus(phyloall, p = 0.5) # can't use consensus here: bc not all trees have the same number of tips
-    }
-    target_tree <- ape::collapse.singles(target_tree)
-    # ape::is.ultrametric(target_tree)
-    # ape::is.binary(target_tree)
-    # plot(target_tree, cex = 0.5)
-  }
-  if (!inherits(target_tree, "phylo")) {
-    message("target_tree is missing or not a phylo object and a backbone tree could not be constructed; returning NA")
-    message("Hint: Was summ_matrix constructed from an object with no good groves? Try running get_best_grove first.")
-    # enhance: add a more formal test of best grove
-    return(NA)
-  }
-  target_tree$edge.length <- NULL
-  target_tree$edge.length.original <- NULL
-  target_tree$tip.label <- gsub(" ", "_", target_tree$tip.label)
-  # test that taxonA and taxonB are all in target tree tip labels
-  rownames(summ_matrix) <- gsub(" ", "_", rownames(summ_matrix))
-  colnames(summ_matrix) <- gsub(" ", "_", colnames(summ_matrix))
-  # find taxa missing in target tree and remove them from summ_matrix
-  missing <- is.na(match(colnames(summ_matrix), target_tree$tip.label))
-  whichmiss <- colnames(summ_matrix)[missing]
-  if (any(missing)) {
-    message("Some taxa in summ_matrix are not in target_tree (", paste0(whichmiss, collapse = ", "), ")")
-    missingrow <- is.na(match(rownames(summ_matrix), target_tree$tip.label))
-    summ_matrix <- summ_matrix[!missingrow, !missing]
-  }
+summary_matrix_to_phylo <- function(summ_matrix,
+                                    datelife_query = NULL,
+                                    target_tree = NULL,
+                                    total_distance = TRUE,
+                                    use = "mean",
+                                    ...) {
+  # enhance: add other dating methods, besides bladj.
+  use <- match.arg(use, c("midpoint", "mean", "median", "min", "max"))
 
-  # to be get_all_calibrations.data.frame:
-  calibrations <- summarize_summary_matrix(summ_matrix)
-
-
-
-
-
-  # ATTENTION
-  # start of use_all_calibrations_bladj, that contains match_all_calibrations
-  # use_all_calibrations_bladj(phy = target_tree, calibrations = caibrations, type = use)
-  # start of match_all_calibrations:
-  # get the coincident node numbers:
-  # ape::is.binary(target_tree)
-  target_tree_nodes <- sapply(seq(nrow(calibrations)), function(i) {
-    phytools::findMRCA(
-      tree = target_tree,
-      tips = as.character(calibrations[i, c("taxonA", "taxonB")]),
-      type = "node"
-    )
-  })
-  target_tree_nodes <- target_tree_nodes - ape::Ntip(target_tree)
-  all_nodes <- sort(unique(target_tree_nodes))
-  # get the node age distribution:
-  all_ages <- lapply(all_nodes, function(i) calibrations[target_tree_nodes == i, "Age"])
-  # any(sapply(all_ages, is.null)) # if FALSE, all nodes have at least one calibration.
-  calibrations2 <- data.frame(MRCA = paste0("n", all_nodes), MinAge = sapply(all_ages, min), MaxAge = sapply(all_ages, max))
-  # calibrations2$MRCA is a factor so have to be made as.character to work with bladj
-  if (all(all_nodes < ape::Ntip(target_tree))) {
-    all_nodes_numbers <- all_nodes + ape::Ntip(target_tree)
-    node_index <- "consecutive"
-  } else {
-    all_nodes_numbers <- all_nodes
-    node_index <- "node_number"
-  }
-  target_tree$node.label <- NULL # make sure its null, so we can rename all nodes of interest to match our labels
-  target_tree <- tree_add_nodelabels(tree = target_tree, node_index = node_index) # all nodes need to be named so make_bladj_tree runs properly
-  # end of match_all_calibrations
-  if ("mean" %in% use) {
-    node_ages <- sapply(seq(nrow(calibrations2)), function(i) sum(calibrations2[i, c("MinAge", "MaxAge")]) / 2)
-  }
+  all_trees <- summary_matrix_to_phylo_all(summ_matrix = summ_matrix,
+                                           datelife_query = datelife_query,
+                                           target_tree = target_tree,
+                                           total_distance = total_distance)
+  ##############################################################################
+  ##############################################################################
+  # add info to return object, and return
+  ############################################################################
+  ############################################################################
   if ("min" %in% use) {
-    node_ages <- calibrations2[, c("MinAge")]
+    new_phy <- all_trees$min
   }
   if ("max" %in% use) {
-    node_ages <- calibrations2[, c("MaxAge")]
+    new_phy <- all_trees$max
   }
-  new_phy <- make_bladj_tree(
-    tree = target_tree, nodenames = as.character(calibrations2$MRCA),
-    nodeages = node_ages
-  )
-  new_phy$dating_method <- "bladj"
-  new_phy$calibration_distribution <- stats::setNames(all_ages, all_nodes_numbers)
-  # new_phy$calibration_MIN <- calibrations2$MinAge
-  # new_phy$calibration_MAX <- calibrations2$MaxAge
-  # new_phy$calibration_MRCA <- all_nodes_numbers
-  # end use_all_calibrations_bladj
-
-
-
-
-  new_phy$clustering_method <- NULL
-  new_phy$ott_ids <- NULL
-  if (!is.null(target_tree$ott_ids)) {
-    tt <- match(new_phy$tip.label, target_tree$tip.label)
-    # match(c("a", "b", "c", "d"), c("c", "d", "a", "a", "a", "b"))
-    new_phy$ott_ids <- target_tree$ott_ids[tt]
+  if ("mean" %in% use) {
+    new_phy <- all_trees$mean
+  }
+  if ("median" %in% use) {
+    new_phy <- all_trees$median
+  }
+  if ("midpoint" %in% use) {
+    new_phy <- all_trees$midpoint
+  }
+  new_phy$calibration_distribution <- attributes(all_trees)$node_age_distributions
+  if (is.null(new_phy$clustering_method)) {
+    new_phy$clustering_method <- NULL
+  }
+  if (inherits(target_tree, "phylo")) {
+    if (!is.null(target_tree$ott_ids) & is.null(new_phy$ott_ids)) {
+      tt <- match(new_phy$tip.label, target_tree$tip.label)
+      # match(c("a", "b", "c", "d"), c("c", "d", "a", "a", "a", "b"))
+      new_phy$ott_ids <- target_tree$ott_ids[tt]
+    }
   }
   return(new_phy)
-}
-
-#' Get minimum, mean and maximum summary chronograms from a summary matrix of a `datelifeResult` object.
-#' @inheritParams summary_matrix_to_phylo
-#' @inheritDotParams summary_matrix_to_phylo
-#' @return A `multiPhylo` object of length 3. It contains min, mean and max summary chronograms.
-#' @details
-#' With this function users can choose the minimum, mean  or maximum ages from
-#' the summary matrix as calibration points to get a single summary chronogram.
-#' Users get all three summary chronograms in a `multiPhylo` object.
-# Modified from `get_all_summaries()` function in `data-raw/datelife_examples.R`
-#' @export
-summary_matrix_to_phylo_all <- function(summ_matrix, target_tree = NULL, ...) {
-  tmean <- summary_matrix_to_phylo(summ_matrix = summ_matrix, use = "mean", target_tree = target_tree, ...)
-  tmin <- summary_matrix_to_phylo(summ_matrix = summ_matrix, use = "min", target_tree = target_tree, ...)
-  tmax <- summary_matrix_to_phylo(summ_matrix = summ_matrix, use = "max", target_tree = target_tree, ...)
-  res <- c(tmean, tmin, tmax)
-  names(res) <- c("mean_tree", "min_tree", "max_tree")
-  class(res) <- "multiPhylo"
-  return(res)
 }
