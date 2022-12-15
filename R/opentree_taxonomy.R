@@ -48,7 +48,7 @@ clean_taxon_info_children <- function(taxon_info,
   return(taxon_info)
 }
 
-#' Check input for other functions
+#' Check input for usage in other `datelife` functions
 #'
 #' `check_ott_input is currently used in functions `[get_ott_clade()],
 #' [get_ott_children()], and [get_otol_synthetic_tree()].
@@ -66,17 +66,31 @@ check_ott_input <- function(input = NULL, ott_ids = NULL, ...) {
   # utils::data(threebirds.rda)
   # input <- threebirds_query$cleaned_names
   # ott_ids <- threebirds_query$ott_ids
-
-  if (is.null(input) & is.null(ott_ids)) {
-    message("Both input arguments are empty; please specify one.")
+  # check that there is at least one input to attempt get ott ids from
+  if (!curl::has_internet()) {
+    message("---> There is no internet connection.")
+    message("Please try again later - returning NA.")
     return(NA)
   }
+  if (is.null(input) & is.null(ott_ids)) {
+    message("Both 'input' and 'ott_ids' arguments are empty.")
+    message("Please provide a non NULL value for 'input' or 'ott_id' - returning NA.")
+    return(NA)
+  }
+  ##############################################################################
+  # case when ott_ids argument is NULL or NA (not provided)
+  # get OTT ids from input argument
+  ##############################################################################
   if (is.null(ott_ids) | all(is.na(ott_ids))) {
     # checks that input is a datelifeQuery object, otherwise it uses make_datelife_query on input
     if (!is_datelife_query(input)) {
       input <- make_datelife_query(input, ...)
     }
-    if (is.numeric(input$ott_id)) {
+    if (is.null(input$ott_id)) {
+      message(input)
+      stop("OTT ids are NULL.")
+    }
+    if (is.numeric(input$ott_id) & !is.na(input$ott_id)) {
       ott_ids <- input$ott_ids
       names(ott_ids) <- input$cleaned_names
     } else {
@@ -89,15 +103,34 @@ check_ott_input <- function(input = NULL, ott_ids = NULL, ...) {
       names(ott_ids) <- input_tnrs$unique_name
     }
   }
+  ##############################################################################
+  # checking values from ott_ids
+  ##############################################################################
   # ott_ids <- suppressWarnings(as.numeric(ott_ids))
+  ott_ids_original <- ott_ids
   if (!is.numeric(ott_ids)) {
-    ott_ids2 <- ott_ids
-    message("ott_ids is not a numeric vector; coercing to numeric.")
-    ott_ids <- as.numeric(ott_ids)
-    if (any(is.na(is.numeric(ott_ids2)))) {
-      message(paste0("\nInput '", paste(names(input)[which(is.na(ott_ids2))], collapse = "', '"), "' not numeric."))
-    }
+    message("---> Coercing input to numeric.")
+    ott_ids <- suppressWarnings(as.numeric(ott_ids))
   }
+  if (any(is.na(ott_ids))) {
+    fails <- ott_ids_original[which(is.na(ott_ids))]
+    verb <- ifelse(length(fails) == 1, "is", "are")
+    fails <- paste(fails, collapse = '", ')
+    message(paste0('---> Input ("',
+            paste(ott_ids_original[which(is.na(ott_ids))],
+                  collapse = '", "'),
+            '") ',
+            verb,
+            ' not numeric.'))
+  }
+  if (all(is.na(ott_ids))) {
+    message("---> Input provided is invalid.")
+    message("Please fix and try again - returning NA.")
+    return(NA)
+  }
+  ##############################################################################
+  # adding names to ott_ids if needed
+  ##############################################################################
   if (is.null(names(ott_ids))) {
     # ott_ids <- c(1, ott_ids) # if ott_ids does not exist it will give an error
     # so we're catching it in an sapply, and giving "error" when it errors.
@@ -108,17 +141,22 @@ check_ott_input <- function(input = NULL, ott_ids = NULL, ...) {
     }))
     # then we subset it:
     if (any(grepl("error", names(ott_ids)))) {
-      message(paste0("\nott_id '", paste(ott_ids[grepl("error", names(ott_ids))], collapse = "', '"), "' not found in Open Tree of Life Taxonomy."))
+      message(paste0("\nott_id '",
+              paste(ott_ids[grepl("error", names(ott_ids))], collapse = "', '"),
+              "' not found in Open Tree of Life Taxonomy."))
       ott_ids <- ott_ids[!grepl("error", names(ott_ids))]
     }
   }
   # now check for NAs:
   if (any(is.na(ott_ids))) {
-    message(paste0("\nInput '", paste(names(input)[which(is.na(ott_ids))], collapse = "', '"), "' not found in Open Tree of Life Taxonomy."))
+    message(paste0("\nInput '",
+                   paste(names(input)[which(is.na(ott_ids))], collapse = "', '"),
+                   "' not found in Open Tree of Life Taxonomy."))
     ott_ids <- ott_ids[which(!is.na(ott_ids))]
   }
   if (length(ott_ids) < 1) {
-    message("At least one valid input name or numeric ott IDs are needed to get any information")
+    message("---> At least one valid taxon name or numeric OTT id is needed to continue.")
+    message("Please check your inputs and try again - returning NA.")
     return(NA)
   }
   return(ott_ids)
@@ -267,7 +305,7 @@ get_ott_clade <- function(input = NULL, ott_ids = NULL, ott_rank = "family") {
 #' Taxonomic identifiers (OTT ids) from a taxonomic source.
 #'
 #' @inheritParams check_ott_input
-#' @param taxonomic_source A character vector with the desired taxonomic sources.
+#' @param reference_taxonomy A character vector with the desired taxonomic sources.
 #'  Options are "ncbi", "gbif" or "irmng". Any other value will retrieve data
 #'  from all taxonomic sources. The function defaults to "ncbi".
 #' @return A named list containing valid taxonomic children of given taxonomic name(s).
@@ -290,8 +328,8 @@ get_ott_clade <- function(input = NULL, ott_ids = NULL, ott_rank = "family") {
 # input = c("Felis", "Homo", "Malvaceae")
 # input = "Telespiza"
 #' @export
-get_valid_children <- function(input = NULL, ott_ids = NULL, taxonomic_source = "ncbi") {
-  taxonomic_source_here <- tryCatch(match.arg(taxonomic_source, c("ncbi", "gbif", "irmng")),
+get_valid_children <- function(input = NULL, ott_ids = NULL, reference_taxonomy = "ncbi") {
+  reference_taxonomy_here <- tryCatch(match.arg(reference_taxonomy, c("ncbi", "gbif", "irmng")),
     error = function(e) NULL
   )
   input_ott_match <- check_ott_input(input, ott_ids)
@@ -328,8 +366,8 @@ get_valid_children <- function(input = NULL, ott_ids = NULL, taxonomic_source = 
       names(tax_sources) <- names(child) <- names(rr) <- tt[[1]]$unique_name
       monotypic <- TRUE
     }
-    if (inherits(taxonomic_source_here, "character")) {
-      keep <- sapply(tax_sources, function(x) any(grepl(taxonomic_source_here, x)))
+    if (inherits(reference_taxonomy_here, "character")) {
+      keep <- sapply(tax_sources, function(x) any(grepl(reference_taxonomy_here, x)))
       child <- child[keep]
       rr <- rr[keep]
     }
@@ -367,11 +405,13 @@ get_valid_children <- function(input = NULL, ott_ids = NULL, taxonomic_source = 
 #' names(ids) <- tnrs$unique_name
 #' children <- get_ott_children(ott_ids = ids) # or
 #' children <- get_ott_children(input = "Canis")
+#' if (!is.na(children)) {
 #' str(children)
 #' ids <- children$Canis$ott_id
 #' names(ids) <- rownames(children$Canis)
 #' tree_children <- datelife::get_otol_synthetic_tree(ott_ids = ids)
 #' plot(tree_children, cex = 0.3)
+#' }
 #'
 #' # An example with flowering plants:
 #'
@@ -389,11 +429,23 @@ get_valid_children <- function(input = NULL, ott_ids = NULL, taxonomic_source = 
 # nrow(children[[1]])
 # sum(children[[1]]$rank == "species")
 get_ott_children <- function(input = NULL, ott_ids = NULL, ott_rank = "species", ...) {
-  # iput <- c("Felis", "Homo", "Malvaceae")
+  # input <- c("Felis", "Homo", "Malvaceae")
   input_ott_match <- check_ott_input(input, ott_ids)
-  # names(input_ott_match)
+  if (is.na(input_ott_match)) {
+    # no need for message, here, they are all wrapped in check_ott_input
+    return(NA)
+  }
   all_children <- vector(mode = "list", length = length(input_ott_match))
-  input_ott_match_ranks <- unlist(sapply(rotl::taxonomy_taxon_info(input_ott_match), "[", "rank"))
+  input_ott_match_ranks <- tryCatch({unlist(sapply(rotl::taxonomy_taxon_info(input_ott_match), "[", "rank"))},
+                                    error = function(e) {
+                                      message(e)
+                                      return(NA)
+                                    })
+  if (is.na(input_ott_match_ranks)) {
+    message("---> Could not retrieve taxonomic data from Open Tree of Life database for the provided inputs.")
+    message("Returning NA.")
+    return(NA)
+  }
   # grepl(paste0("\\b", ott_rank, "\\b"), c("species", "subspecies"))
   ott_ranki <- grepl(paste0("\\b", ott_rank, "\\b"), input_ott_match_ranks)
   df <- data.frame(ott_id = input_ott_match[ott_ranki], rank = rep(ott_rank, sum(ott_ranki)))

@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Making a DateLife query</title>
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Making a DateLife query</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(datelife)</a></code></pre></div>
+<p>To query DateLife’s chronogram database, taxon names provided as input are processed and matched to the Open Tree of Life taxonomy (OTT). This is done with the function <code>make_datelife_query()</code>.</p>
+<p>Next, we present some usage examples of this function.</p>
+<div id="when-input-is-list-or-vector-of-taxon-names" class="section level3">
+<h3>When <code>input</code> is list or vector of taxon names</h3>
+<p>We can process a single taxon:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">query1 &lt;-<span class="st"> </span><span class="kw">make_datelife_query</span>(<span class="dt">input =</span> <span class="st">&quot;Canis&quot;</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; ---&gt; Making a DateLife query.</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; ---&gt; Working with the following taxon: Canis.</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; DateLife query done!</span></a></code></pre></div>
+<p>Or several taxon names:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">query10 &lt;-<span class="st"> </span><span class="kw">make_datelife_query</span>(<span class="dt">input =</span> <span class="kw">rep</span>(<span class="st">&quot;Canis&quot;</span>, <span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; ---&gt; Making a DateLife query.</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; ---&gt; Working with the following 10 taxa: Canis | Canis | Canis | Canis | Canis | Canis | Canis | Canis | Canis | Canis.</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; DateLife query done!</span></a></code></pre></div>
+<p>In any case, the output is a list:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">query10</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt;  [1] &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot;</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; [10] &quot;Canis&quot;</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;  Canis  Canis  Canis  Canis  Canis  Canis  Canis  Canis  Canis  Canis </span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; 372706 372706 372706 372706 372706 372706 372706 372706 372706 372706 </span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+</div>
+<div id="when-input-names-are-not-found-in-the-taxonomy" class="section level3">
+<h3>When <code>input</code> names are not found in the taxonomy</h3>
+<p>The function returns <code>NA</code> as taxonomic id for the missing name:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="kw">c</span>(<span class="st">&quot;Canis&quot;</span>, <span class="st">&quot;werewolf&quot;</span>, <span class="st">&quot;jupiter&quot;</span>))</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="st">  </span><span class="er">|=======================</span><span class="st">                                               </span><span class="er">|</span><span class="st">  </span><span class="dv">33</span>%</a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; Warning: werewolf are not matched</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="st">  </span><span class="er">|===============================================</span><span class="st">                       </span><span class="er">|</span><span class="st">  </span><span class="dv">67</span>%</a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; Warning: jupiter are not matched</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt; [1] &quot;Canis&quot;    &quot;werewolf&quot; &quot;jupiter&quot; </span></a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt; [1] &quot;Canis&quot; NA      NA     </span></a>
+<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt; [1] 372706     NA     NA</span></a>
+<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb5-29" data-line-number="29"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-30" data-line-number="30"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb5-31" data-line-number="31"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+</div>
+<div id="subspecies-can-also-be-searched" class="section level3">
+<h3>Subspecies can also be searched</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="st">&quot;Canis mesomelas elongae&quot;</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; [1] &quot;Canis mesomelas elongae&quot;</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; [1] &quot;Canis mesomelas elongae&quot;</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt; [1] 576165</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a>
+<a class="sourceLine" id="cb6-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb6-25" data-line-number="25">all_subspecies &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Canis mesomelas elongae&quot;</span>, <span class="st">&quot;Canis mesomelas elongae&quot;</span>)</a>
+<a class="sourceLine" id="cb6-26" data-line-number="26"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> all_subspecies)</a>
+<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb6-28" data-line-number="28"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb6-29" data-line-number="29"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb6-30" data-line-number="30"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-31" data-line-number="31">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-32" data-line-number="32"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb6-33" data-line-number="33">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb6-35" data-line-number="35"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb6-36" data-line-number="36"><span class="co">#&gt; [1] &quot;Canis mesomelas elongae&quot; &quot;Canis mesomelas elongae&quot;</span></a>
+<a class="sourceLine" id="cb6-37" data-line-number="37"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-38" data-line-number="38"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb6-39" data-line-number="39"><span class="co">#&gt; [1] &quot;Canis mesomelas elongae&quot; &quot;Canis mesomelas elongae&quot;</span></a>
+<a class="sourceLine" id="cb6-40" data-line-number="40"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-41" data-line-number="41"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb6-42" data-line-number="42"><span class="co">#&gt; [1] 576165 576165</span></a>
+<a class="sourceLine" id="cb6-43" data-line-number="43"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-44" data-line-number="44"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb6-45" data-line-number="45"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb6-46" data-line-number="46"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-47" data-line-number="47"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb6-48" data-line-number="48"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a>
+<a class="sourceLine" id="cb6-49" data-line-number="49"></a>
+<a class="sourceLine" id="cb6-50" data-line-number="50">one_subspecies &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Canis mesomelas elongae&quot;</span>, <span class="st">&quot;Canis adustus&quot;</span>, <span class="st">&quot;Lycalopex fulvipes&quot;</span>)</a>
+<a class="sourceLine" id="cb6-51" data-line-number="51"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> one_subspecies)</a>
+<a class="sourceLine" id="cb6-52" data-line-number="52"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb6-53" data-line-number="53"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb6-54" data-line-number="54"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb6-55" data-line-number="55"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-56" data-line-number="56">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-57" data-line-number="57"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb6-58" data-line-number="58">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-59" data-line-number="59"><span class="st">  </span><span class="er">|=======================</span><span class="st">                                               </span><span class="er">|</span><span class="st">  </span><span class="dv">33</span>%</a>
+<a class="sourceLine" id="cb6-60" data-line-number="60">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-61" data-line-number="61"><span class="st">  </span><span class="er">|===============================================</span><span class="st">                       </span><span class="er">|</span><span class="st">  </span><span class="dv">67</span>%</a>
+<a class="sourceLine" id="cb6-62" data-line-number="62">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb6-63" data-line-number="63"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb6-64" data-line-number="64"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb6-65" data-line-number="65"><span class="co">#&gt; [1] &quot;Canis mesomelas elongae&quot; &quot;Canis adustus&quot;          </span></a>
+<a class="sourceLine" id="cb6-66" data-line-number="66"><span class="co">#&gt; [3] &quot;Lycalopex fulvipes&quot;     </span></a>
+<a class="sourceLine" id="cb6-67" data-line-number="67"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-68" data-line-number="68"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb6-69" data-line-number="69"><span class="co">#&gt; [1] &quot;Canis mesomelas elongae&quot; &quot;Canis adustus&quot;          </span></a>
+<a class="sourceLine" id="cb6-70" data-line-number="70"><span class="co">#&gt; [3] &quot;Lycalopex fulvipes&quot;     </span></a>
+<a class="sourceLine" id="cb6-71" data-line-number="71"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-72" data-line-number="72"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb6-73" data-line-number="73"><span class="co">#&gt; [1] 576165 621176 996573</span></a>
+<a class="sourceLine" id="cb6-74" data-line-number="74"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-75" data-line-number="75"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb6-76" data-line-number="76"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb6-77" data-line-number="77"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb6-78" data-line-number="78"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb6-79" data-line-number="79"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+</div>
+<div id="choosing-between-homonyms" class="section level3">
+<h3>Choosing between homonyms</h3>
+<p>Taxonomic homonyms are valid names that are used for different biological entities. For example, the genus name <em>Aotus</em> refers to a monkey and a grass. TNRS is smart enough to choose a taxonomic context for a set of names, but it is not infallible.</p>
+<p>For example, when referring to the grass, TNRS chooses the correct taxon id:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="kw">c</span>(<span class="st">&quot;Aotus&quot;</span>, <span class="st">&quot;Poa&quot;</span>, <span class="st">&quot;Arabidopsis&quot;</span>))</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span><span class="er">|=======================</span><span class="st">                                               </span><span class="er">|</span><span class="st">  </span><span class="dv">33</span>%</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="er">|===============================================</span><span class="st">                       </span><span class="er">|</span><span class="st">  </span><span class="dv">67</span>%</a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; [1] &quot;Aotus&quot;       &quot;Poa&quot;         &quot;Arabidopsis&quot;</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">#&gt; [1] &quot;Aotus (genus in kingdom Archaeplastida)&quot;</span></a>
+<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co">#&gt; [2] &quot;Poa&quot;                                    </span></a>
+<a class="sourceLine" id="cb7-20" data-line-number="20"><span class="co">#&gt; [3] &quot;Arabidopsis&quot;                            </span></a>
+<a class="sourceLine" id="cb7-21" data-line-number="21"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-22" data-line-number="22"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb7-23" data-line-number="23"><span class="co">#&gt; [1] 559026 985636 309275</span></a>
+<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-25" data-line-number="25"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb7-26" data-line-number="26"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb7-27" data-line-number="27"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+<p>But when referring to the monkey, TNRS still chooses the grass:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="kw">c</span>(<span class="st">&quot;Aotus&quot;</span>, <span class="st">&quot;Insulacebus&quot;</span>, <span class="st">&quot;Microcebus&quot;</span>))</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb8-8" data-line-number="8">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="st">  </span><span class="er">|=======================</span><span class="st">                                               </span><span class="er">|</span><span class="st">  </span><span class="dv">33</span>%</a>
+<a class="sourceLine" id="cb8-10" data-line-number="10">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="st">  </span><span class="er">|===============================================</span><span class="st">                       </span><span class="er">|</span><span class="st">  </span><span class="dv">67</span>%</a>
+<a class="sourceLine" id="cb8-12" data-line-number="12">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; [1] &quot;Aotus&quot;       &quot;Insulacebus&quot; &quot;Microcebus&quot; </span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt; [1] &quot;Aotus (genus in kingdom Archaeplastida)&quot;</span></a>
+<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt; [2] &quot;Insulacebus&quot;                            </span></a>
+<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; [3] &quot;Microcebus&quot;                             </span></a>
+<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt; [1]  559026 6145234  734824</span></a>
+<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb8-26" data-line-number="26"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb8-29" data-line-number="29"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+<p>To make sure that we get the taxonomic id and data for the taxon we want, we can specify a “taxonomic context”:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">rotl<span class="op">::</span><span class="kw">tnrs_contexts</span>()</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="kw">c</span>(<span class="st">&quot;Aotus&quot;</span>, <span class="st">&quot;Insulacebus&quot;</span>, <span class="st">&quot;Microcebus&quot;</span>), <span class="dt">context_name =</span> <span class="st">&quot;Mammals&quot;</span>)</a></code></pre></div>
+</div>
+<div id="making-a-query-from-an-inclusive-taxonomic-group" class="section level3">
+<h3>Making a query from an inclusive taxonomic group</h3>
+<p>You can run it for one taxon name only:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="st">&quot;Canis&quot;</span>,</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">                     <span class="dt">get_spp_from_taxon =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">                     <span class="dt">reference_taxonomy =</span> <span class="st">&quot;ott&quot;</span>)</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; ---&gt; Getting species for the following taxon names :Canis.</span></a>
+<a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within genus 'Canis' with OTT id number = 372706.</span></a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; * Found the following taxonomic ranks: species, subspecies, no rank - terminal, no rank.</span></a>
+<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; * There are 21 subspecies.</span></a>
+<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; * There are 42 total species.</span></a>
+<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt; * There are 36 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 36 species names within genus 'Canis' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb10-19" data-line-number="19"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb10-20" data-line-number="20"><span class="co">#&gt; [1] &quot;Canis&quot;</span></a>
+<a class="sourceLine" id="cb10-21" data-line-number="21"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-22" data-line-number="22"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb10-23" data-line-number="23"><span class="co">#&gt;                      3612500                      5835572 </span></a>
+<a class="sourceLine" id="cb10-24" data-line-number="24"><span class="co">#&gt;                &quot;Canis dirus&quot;               &quot;Canis anthus&quot; </span></a>
+<a class="sourceLine" id="cb10-25" data-line-number="25"><span class="co">#&gt;                       113383                       752755 </span></a>
+<a class="sourceLine" id="cb10-26" data-line-number="26"><span class="co">#&gt;                &quot;Canis rufus&quot;             &quot;Canis simensis&quot; </span></a>
+<a class="sourceLine" id="cb10-27" data-line-number="27"><span class="co">#&gt;                       621168                       621176 </span></a>
+<a class="sourceLine" id="cb10-28" data-line-number="28"><span class="co">#&gt;               &quot;Canis aureus&quot;              &quot;Canis adustus&quot; </span></a>
+<a class="sourceLine" id="cb10-29" data-line-number="29"><span class="co">#&gt;                       247331                       346723 </span></a>
+<a class="sourceLine" id="cb10-30" data-line-number="30"><span class="co">#&gt;              &quot;Canis latrans&quot;         &quot;Canis himalayensis&quot; </span></a>
+<a class="sourceLine" id="cb10-31" data-line-number="31"><span class="co">#&gt;                       346728                      4941918 </span></a>
+<a class="sourceLine" id="cb10-32" data-line-number="32"><span class="co">#&gt;               &quot;Canis indica&quot; &quot;Canis environmental sample&quot; </span></a>
+<a class="sourceLine" id="cb10-33" data-line-number="33"><span class="co">#&gt;                      7655930                      7655947 </span></a>
+<a class="sourceLine" id="cb10-34" data-line-number="34"><span class="co">#&gt;            &quot;Canis ameghinoi&quot;             &quot;Canis nehringi&quot; </span></a>
+<a class="sourceLine" id="cb10-35" data-line-number="35"><span class="co">#&gt;                      7655949                      7655942 </span></a>
+<a class="sourceLine" id="cb10-36" data-line-number="36"><span class="co">#&gt;            &quot;Canis palustris&quot;                &quot;Canis lanka&quot; </span></a>
+<a class="sourceLine" id="cb10-37" data-line-number="37"><span class="co">#&gt;                      7655948                      7655939 </span></a>
+<a class="sourceLine" id="cb10-38" data-line-number="38"><span class="co">#&gt;             &quot;Canis pallipes&quot;                 &quot;Canis gezi&quot; </span></a>
+<a class="sourceLine" id="cb10-39" data-line-number="39"><span class="co">#&gt;                      7655951                      7655935 </span></a>
+<a class="sourceLine" id="cb10-40" data-line-number="40"><span class="co">#&gt;            &quot;Canis primaevus&quot;            &quot;Canis chrysurus&quot; </span></a>
+<a class="sourceLine" id="cb10-41" data-line-number="41"><span class="co">#&gt;                      7655937                      7655941 </span></a>
+<a class="sourceLine" id="cb10-42" data-line-number="42"><span class="co">#&gt;          &quot;Canis dukhunensis&quot;               &quot;Canis kokree&quot; </span></a>
+<a class="sourceLine" id="cb10-43" data-line-number="43"><span class="co">#&gt;                      7655952                      7655940 </span></a>
+<a class="sourceLine" id="cb10-44" data-line-number="44"><span class="co">#&gt;              &quot;Canis sladeni&quot;           &quot;Canis himalaicus&quot; </span></a>
+<a class="sourceLine" id="cb10-45" data-line-number="45"><span class="co">#&gt;                      7655934                      7655936 </span></a>
+<a class="sourceLine" id="cb10-46" data-line-number="46"><span class="co">#&gt;               &quot;Canis chanco&quot;         &quot;Canis curvipalatus&quot; </span></a>
+<a class="sourceLine" id="cb10-47" data-line-number="47"><span class="co">#&gt;                      7655943                      7655931 </span></a>
+<a class="sourceLine" id="cb10-48" data-line-number="48"><span class="co">#&gt;            &quot;Canis lateralis&quot;           &quot;Canis argentinus&quot; </span></a>
+<a class="sourceLine" id="cb10-49" data-line-number="49"><span class="co">#&gt;                      7655953                      7655946 </span></a>
+<a class="sourceLine" id="cb10-50" data-line-number="50"><span class="co">#&gt;           &quot;Canis tarijensis&quot;                &quot;Canis naria&quot; </span></a>
+<a class="sourceLine" id="cb10-51" data-line-number="51"><span class="co">#&gt;                      7655950                      7655933 </span></a>
+<a class="sourceLine" id="cb10-52" data-line-number="52"><span class="co">#&gt;             &quot;Canis peruanus&quot;             &quot;Canis cautleyi&quot; </span></a>
+<a class="sourceLine" id="cb10-53" data-line-number="53"><span class="co">#&gt;                      7655954                      6145382 </span></a>
+<a class="sourceLine" id="cb10-54" data-line-number="54"><span class="co">#&gt;              &quot;Canis ursinus&quot;           &quot;Canis antarticus&quot; </span></a>
+<a class="sourceLine" id="cb10-55" data-line-number="55"><span class="co">#&gt;                      6145383                      7655938 </span></a>
+<a class="sourceLine" id="cb10-56" data-line-number="56"><span class="co">#&gt;                &quot;Canis dingo&quot;             &quot;Canis etruscus&quot; </span></a>
+<a class="sourceLine" id="cb10-57" data-line-number="57"><span class="co">#&gt;                       666235                       247341 </span></a>
+<a class="sourceLine" id="cb10-58" data-line-number="58"><span class="co">#&gt;            &quot;Canis mesomelas&quot;                &quot;Canis lupus&quot; </span></a>
+<a class="sourceLine" id="cb10-59" data-line-number="59"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-60" data-line-number="60"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb10-61" data-line-number="61"><span class="co">#&gt;                Canis dirus               Canis anthus </span></a>
+<a class="sourceLine" id="cb10-62" data-line-number="62"><span class="co">#&gt;                    3612500                    5835572 </span></a>
+<a class="sourceLine" id="cb10-63" data-line-number="63"><span class="co">#&gt;                Canis rufus             Canis simensis </span></a>
+<a class="sourceLine" id="cb10-64" data-line-number="64"><span class="co">#&gt;                     113383                     752755 </span></a>
+<a class="sourceLine" id="cb10-65" data-line-number="65"><span class="co">#&gt;               Canis aureus              Canis adustus </span></a>
+<a class="sourceLine" id="cb10-66" data-line-number="66"><span class="co">#&gt;                     621168                     621176 </span></a>
+<a class="sourceLine" id="cb10-67" data-line-number="67"><span class="co">#&gt;              Canis latrans         Canis himalayensis </span></a>
+<a class="sourceLine" id="cb10-68" data-line-number="68"><span class="co">#&gt;                     247331                     346723 </span></a>
+<a class="sourceLine" id="cb10-69" data-line-number="69"><span class="co">#&gt;               Canis indica Canis environmental sample </span></a>
+<a class="sourceLine" id="cb10-70" data-line-number="70"><span class="co">#&gt;                     346728                    4941918 </span></a>
+<a class="sourceLine" id="cb10-71" data-line-number="71"><span class="co">#&gt;            Canis ameghinoi             Canis nehringi </span></a>
+<a class="sourceLine" id="cb10-72" data-line-number="72"><span class="co">#&gt;                    7655930                    7655947 </span></a>
+<a class="sourceLine" id="cb10-73" data-line-number="73"><span class="co">#&gt;            Canis palustris                Canis lanka </span></a>
+<a class="sourceLine" id="cb10-74" data-line-number="74"><span class="co">#&gt;                    7655949                    7655942 </span></a>
+<a class="sourceLine" id="cb10-75" data-line-number="75"><span class="co">#&gt;             Canis pallipes                 Canis gezi </span></a>
+<a class="sourceLine" id="cb10-76" data-line-number="76"><span class="co">#&gt;                    7655948                    7655939 </span></a>
+<a class="sourceLine" id="cb10-77" data-line-number="77"><span class="co">#&gt;            Canis primaevus            Canis chrysurus </span></a>
+<a class="sourceLine" id="cb10-78" data-line-number="78"><span class="co">#&gt;                    7655951                    7655935 </span></a>
+<a class="sourceLine" id="cb10-79" data-line-number="79"><span class="co">#&gt;          Canis dukhunensis               Canis kokree </span></a>
+<a class="sourceLine" id="cb10-80" data-line-number="80"><span class="co">#&gt;                    7655937                    7655941 </span></a>
+<a class="sourceLine" id="cb10-81" data-line-number="81"><span class="co">#&gt;              Canis sladeni           Canis himalaicus </span></a>
+<a class="sourceLine" id="cb10-82" data-line-number="82"><span class="co">#&gt;                    7655952                    7655940 </span></a>
+<a class="sourceLine" id="cb10-83" data-line-number="83"><span class="co">#&gt;               Canis chanco         Canis curvipalatus </span></a>
+<a class="sourceLine" id="cb10-84" data-line-number="84"><span class="co">#&gt;                    7655934                    7655936 </span></a>
+<a class="sourceLine" id="cb10-85" data-line-number="85"><span class="co">#&gt;            Canis lateralis           Canis argentinus </span></a>
+<a class="sourceLine" id="cb10-86" data-line-number="86"><span class="co">#&gt;                    7655943                    7655931 </span></a>
+<a class="sourceLine" id="cb10-87" data-line-number="87"><span class="co">#&gt;           Canis tarijensis                Canis naria </span></a>
+<a class="sourceLine" id="cb10-88" data-line-number="88"><span class="co">#&gt;                    7655953                    7655946 </span></a>
+<a class="sourceLine" id="cb10-89" data-line-number="89"><span class="co">#&gt;             Canis peruanus             Canis cautleyi </span></a>
+<a class="sourceLine" id="cb10-90" data-line-number="90"><span class="co">#&gt;                    7655950                    7655933 </span></a>
+<a class="sourceLine" id="cb10-91" data-line-number="91"><span class="co">#&gt;              Canis ursinus           Canis antarticus </span></a>
+<a class="sourceLine" id="cb10-92" data-line-number="92"><span class="co">#&gt;                    7655954                    6145382 </span></a>
+<a class="sourceLine" id="cb10-93" data-line-number="93"><span class="co">#&gt;                Canis dingo             Canis etruscus </span></a>
+<a class="sourceLine" id="cb10-94" data-line-number="94"><span class="co">#&gt;                    6145383                    7655938 </span></a>
+<a class="sourceLine" id="cb10-95" data-line-number="95"><span class="co">#&gt;            Canis mesomelas                Canis lupus </span></a>
+<a class="sourceLine" id="cb10-96" data-line-number="96"><span class="co">#&gt;                     666235                     247341 </span></a>
+<a class="sourceLine" id="cb10-97" data-line-number="97"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-98" data-line-number="98"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb10-99" data-line-number="99"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb10-100" data-line-number="100"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb10-101" data-line-number="101"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb10-102" data-line-number="102"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+<p>Or two or more:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="kw">c</span>(<span class="st">&quot;Canis&quot;</span>, <span class="st">&quot;Elephas&quot;</span>),</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">                     <span class="dt">get_spp_from_taxon =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">                     <span class="dt">reference_taxonomy =</span> <span class="st">&quot;ott&quot;</span>)</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb11-10" data-line-number="10">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</a>
+<a class="sourceLine" id="cb11-12" data-line-number="12">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="co">#&gt; ---&gt; Getting species for the following taxon names :Canis, Elephas.</span></a>
+<a class="sourceLine" id="cb11-15" data-line-number="15"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within genus 'Canis' with OTT id number = 372706.</span></a>
+<a class="sourceLine" id="cb11-16" data-line-number="16"><span class="co">#&gt; * Found the following taxonomic ranks: species, subspecies, no rank - terminal, no rank.</span></a>
+<a class="sourceLine" id="cb11-17" data-line-number="17"><span class="co">#&gt; * There are 21 subspecies.</span></a>
+<a class="sourceLine" id="cb11-18" data-line-number="18"><span class="co">#&gt; * There are 42 total species.</span></a>
+<a class="sourceLine" id="cb11-19" data-line-number="19"><span class="co">#&gt; * There are 36 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb11-20" data-line-number="20"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 36 species names within genus 'Canis' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb11-21" data-line-number="21"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within genus 'Elephas' with OTT id number = 541927.</span></a>
+<a class="sourceLine" id="cb11-22" data-line-number="22"><span class="co">#&gt; * Found the following taxonomic ranks: subspecies, no rank, no rank - terminal, species.</span></a>
+<a class="sourceLine" id="cb11-23" data-line-number="23"><span class="co">#&gt; * There are 5 subspecies.</span></a>
+<a class="sourceLine" id="cb11-24" data-line-number="24"><span class="co">#&gt; * There are 8 total species.</span></a>
+<a class="sourceLine" id="cb11-25" data-line-number="25"><span class="co">#&gt; * There are 7 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb11-26" data-line-number="26"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 7 species names within genus 'Elephas' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb11-27" data-line-number="27"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb11-28" data-line-number="28"><span class="co">#&gt; [1] &quot;Canis&quot;   &quot;Elephas&quot;</span></a>
+<a class="sourceLine" id="cb11-29" data-line-number="29"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-30" data-line-number="30"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb11-31" data-line-number="31"><span class="co">#&gt;                      3612500                      5835572 </span></a>
+<a class="sourceLine" id="cb11-32" data-line-number="32"><span class="co">#&gt;                &quot;Canis dirus&quot;               &quot;Canis anthus&quot; </span></a>
+<a class="sourceLine" id="cb11-33" data-line-number="33"><span class="co">#&gt;                       113383                       752755 </span></a>
+<a class="sourceLine" id="cb11-34" data-line-number="34"><span class="co">#&gt;                &quot;Canis rufus&quot;             &quot;Canis simensis&quot; </span></a>
+<a class="sourceLine" id="cb11-35" data-line-number="35"><span class="co">#&gt;                       621168                       621176 </span></a>
+<a class="sourceLine" id="cb11-36" data-line-number="36"><span class="co">#&gt;               &quot;Canis aureus&quot;              &quot;Canis adustus&quot; </span></a>
+<a class="sourceLine" id="cb11-37" data-line-number="37"><span class="co">#&gt;                       247331                       346723 </span></a>
+<a class="sourceLine" id="cb11-38" data-line-number="38"><span class="co">#&gt;              &quot;Canis latrans&quot;         &quot;Canis himalayensis&quot; </span></a>
+<a class="sourceLine" id="cb11-39" data-line-number="39"><span class="co">#&gt;                       346728                      4941918 </span></a>
+<a class="sourceLine" id="cb11-40" data-line-number="40"><span class="co">#&gt;               &quot;Canis indica&quot; &quot;Canis environmental sample&quot; </span></a>
+<a class="sourceLine" id="cb11-41" data-line-number="41"><span class="co">#&gt;                      7655930                      7655947 </span></a>
+<a class="sourceLine" id="cb11-42" data-line-number="42"><span class="co">#&gt;            &quot;Canis ameghinoi&quot;             &quot;Canis nehringi&quot; </span></a>
+<a class="sourceLine" id="cb11-43" data-line-number="43"><span class="co">#&gt;                      7655949                      7655942 </span></a>
+<a class="sourceLine" id="cb11-44" data-line-number="44"><span class="co">#&gt;            &quot;Canis palustris&quot;                &quot;Canis lanka&quot; </span></a>
+<a class="sourceLine" id="cb11-45" data-line-number="45"><span class="co">#&gt;                      7655948                      7655939 </span></a>
+<a class="sourceLine" id="cb11-46" data-line-number="46"><span class="co">#&gt;             &quot;Canis pallipes&quot;                 &quot;Canis gezi&quot; </span></a>
+<a class="sourceLine" id="cb11-47" data-line-number="47"><span class="co">#&gt;                      7655951                      7655935 </span></a>
+<a class="sourceLine" id="cb11-48" data-line-number="48"><span class="co">#&gt;            &quot;Canis primaevus&quot;            &quot;Canis chrysurus&quot; </span></a>
+<a class="sourceLine" id="cb11-49" data-line-number="49"><span class="co">#&gt;                      7655937                      7655941 </span></a>
+<a class="sourceLine" id="cb11-50" data-line-number="50"><span class="co">#&gt;          &quot;Canis dukhunensis&quot;               &quot;Canis kokree&quot; </span></a>
+<a class="sourceLine" id="cb11-51" data-line-number="51"><span class="co">#&gt;                      7655952                      7655940 </span></a>
+<a class="sourceLine" id="cb11-52" data-line-number="52"><span class="co">#&gt;              &quot;Canis sladeni&quot;           &quot;Canis himalaicus&quot; </span></a>
+<a class="sourceLine" id="cb11-53" data-line-number="53"><span class="co">#&gt;                      7655934                      7655936 </span></a>
+<a class="sourceLine" id="cb11-54" data-line-number="54"><span class="co">#&gt;               &quot;Canis chanco&quot;         &quot;Canis curvipalatus&quot; </span></a>
+<a class="sourceLine" id="cb11-55" data-line-number="55"><span class="co">#&gt;                      7655943                      7655931 </span></a>
+<a class="sourceLine" id="cb11-56" data-line-number="56"><span class="co">#&gt;            &quot;Canis lateralis&quot;           &quot;Canis argentinus&quot; </span></a>
+<a class="sourceLine" id="cb11-57" data-line-number="57"><span class="co">#&gt;                      7655953                      7655946 </span></a>
+<a class="sourceLine" id="cb11-58" data-line-number="58"><span class="co">#&gt;           &quot;Canis tarijensis&quot;                &quot;Canis naria&quot; </span></a>
+<a class="sourceLine" id="cb11-59" data-line-number="59"><span class="co">#&gt;                      7655950                      7655933 </span></a>
+<a class="sourceLine" id="cb11-60" data-line-number="60"><span class="co">#&gt;             &quot;Canis peruanus&quot;             &quot;Canis cautleyi&quot; </span></a>
+<a class="sourceLine" id="cb11-61" data-line-number="61"><span class="co">#&gt;                      7655954                      6145382 </span></a>
+<a class="sourceLine" id="cb11-62" data-line-number="62"><span class="co">#&gt;              &quot;Canis ursinus&quot;           &quot;Canis antarticus&quot; </span></a>
+<a class="sourceLine" id="cb11-63" data-line-number="63"><span class="co">#&gt;                      6145383                      7655938 </span></a>
+<a class="sourceLine" id="cb11-64" data-line-number="64"><span class="co">#&gt;                &quot;Canis dingo&quot;             &quot;Canis etruscus&quot; </span></a>
+<a class="sourceLine" id="cb11-65" data-line-number="65"><span class="co">#&gt;                       666235                       247341 </span></a>
+<a class="sourceLine" id="cb11-66" data-line-number="66"><span class="co">#&gt;            &quot;Canis mesomelas&quot;                &quot;Canis lupus&quot; </span></a>
+<a class="sourceLine" id="cb11-67" data-line-number="67"><span class="co">#&gt;                      7654243                      7654244 </span></a>
+<a class="sourceLine" id="cb11-68" data-line-number="68"><span class="co">#&gt;         &quot;Elephas armeniacus&quot;          &quot;Elephas namadicus&quot; </span></a>
+<a class="sourceLine" id="cb11-69" data-line-number="69"><span class="co">#&gt;                      7654245                      3607197 </span></a>
+<a class="sourceLine" id="cb11-70" data-line-number="70"><span class="co">#&gt;               &quot;Elephas zulu&quot;         &quot;Elephas bombifrons&quot; </span></a>
+<a class="sourceLine" id="cb11-71" data-line-number="71"><span class="co">#&gt;                      6144032                      7654246 </span></a>
+<a class="sourceLine" id="cb11-72" data-line-number="72"><span class="co">#&gt;         &quot;Elephas celebensis&quot;    &quot;Palaeoloxodon lomolinoi&quot; </span></a>
+<a class="sourceLine" id="cb11-73" data-line-number="73"><span class="co">#&gt;                       541928 </span></a>
+<a class="sourceLine" id="cb11-74" data-line-number="74"><span class="co">#&gt;            &quot;Elephas maximus&quot; </span></a>
+<a class="sourceLine" id="cb11-75" data-line-number="75"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-76" data-line-number="76"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb11-77" data-line-number="77"><span class="co">#&gt;                Canis dirus               Canis anthus </span></a>
+<a class="sourceLine" id="cb11-78" data-line-number="78"><span class="co">#&gt;                    3612500                    5835572 </span></a>
+<a class="sourceLine" id="cb11-79" data-line-number="79"><span class="co">#&gt;                Canis rufus             Canis simensis </span></a>
+<a class="sourceLine" id="cb11-80" data-line-number="80"><span class="co">#&gt;                     113383                     752755 </span></a>
+<a class="sourceLine" id="cb11-81" data-line-number="81"><span class="co">#&gt;               Canis aureus              Canis adustus </span></a>
+<a class="sourceLine" id="cb11-82" data-line-number="82"><span class="co">#&gt;                     621168                     621176 </span></a>
+<a class="sourceLine" id="cb11-83" data-line-number="83"><span class="co">#&gt;              Canis latrans         Canis himalayensis </span></a>
+<a class="sourceLine" id="cb11-84" data-line-number="84"><span class="co">#&gt;                     247331                     346723 </span></a>
+<a class="sourceLine" id="cb11-85" data-line-number="85"><span class="co">#&gt;               Canis indica Canis environmental sample </span></a>
+<a class="sourceLine" id="cb11-86" data-line-number="86"><span class="co">#&gt;                     346728                    4941918 </span></a>
+<a class="sourceLine" id="cb11-87" data-line-number="87"><span class="co">#&gt;            Canis ameghinoi             Canis nehringi </span></a>
+<a class="sourceLine" id="cb11-88" data-line-number="88"><span class="co">#&gt;                    7655930                    7655947 </span></a>
+<a class="sourceLine" id="cb11-89" data-line-number="89"><span class="co">#&gt;            Canis palustris                Canis lanka </span></a>
+<a class="sourceLine" id="cb11-90" data-line-number="90"><span class="co">#&gt;                    7655949                    7655942 </span></a>
+<a class="sourceLine" id="cb11-91" data-line-number="91"><span class="co">#&gt;             Canis pallipes                 Canis gezi </span></a>
+<a class="sourceLine" id="cb11-92" data-line-number="92"><span class="co">#&gt;                    7655948                    7655939 </span></a>
+<a class="sourceLine" id="cb11-93" data-line-number="93"><span class="co">#&gt;            Canis primaevus            Canis chrysurus </span></a>
+<a class="sourceLine" id="cb11-94" data-line-number="94"><span class="co">#&gt;                    7655951                    7655935 </span></a>
+<a class="sourceLine" id="cb11-95" data-line-number="95"><span class="co">#&gt;          Canis dukhunensis               Canis kokree </span></a>
+<a class="sourceLine" id="cb11-96" data-line-number="96"><span class="co">#&gt;                    7655937                    7655941 </span></a>
+<a class="sourceLine" id="cb11-97" data-line-number="97"><span class="co">#&gt;              Canis sladeni           Canis himalaicus </span></a>
+<a class="sourceLine" id="cb11-98" data-line-number="98"><span class="co">#&gt;                    7655952                    7655940 </span></a>
+<a class="sourceLine" id="cb11-99" data-line-number="99"><span class="co">#&gt;               Canis chanco         Canis curvipalatus </span></a>
+<a class="sourceLine" id="cb11-100" data-line-number="100"><span class="co">#&gt;                    7655934                    7655936 </span></a>
+<a class="sourceLine" id="cb11-101" data-line-number="101"><span class="co">#&gt;            Canis lateralis           Canis argentinus </span></a>
+<a class="sourceLine" id="cb11-102" data-line-number="102"><span class="co">#&gt;                    7655943                    7655931 </span></a>
+<a class="sourceLine" id="cb11-103" data-line-number="103"><span class="co">#&gt;           Canis tarijensis                Canis naria </span></a>
+<a class="sourceLine" id="cb11-104" data-line-number="104"><span class="co">#&gt;                    7655953                    7655946 </span></a>
+<a class="sourceLine" id="cb11-105" data-line-number="105"><span class="co">#&gt;             Canis peruanus             Canis cautleyi </span></a>
+<a class="sourceLine" id="cb11-106" data-line-number="106"><span class="co">#&gt;                    7655950                    7655933 </span></a>
+<a class="sourceLine" id="cb11-107" data-line-number="107"><span class="co">#&gt;              Canis ursinus           Canis antarticus </span></a>
+<a class="sourceLine" id="cb11-108" data-line-number="108"><span class="co">#&gt;                    7655954                    6145382 </span></a>
+<a class="sourceLine" id="cb11-109" data-line-number="109"><span class="co">#&gt;                Canis dingo             Canis etruscus </span></a>
+<a class="sourceLine" id="cb11-110" data-line-number="110"><span class="co">#&gt;                    6145383                    7655938 </span></a>
+<a class="sourceLine" id="cb11-111" data-line-number="111"><span class="co">#&gt;            Canis mesomelas                Canis lupus </span></a>
+<a class="sourceLine" id="cb11-112" data-line-number="112"><span class="co">#&gt;                     666235                     247341 </span></a>
+<a class="sourceLine" id="cb11-113" data-line-number="113"><span class="co">#&gt;         Elephas armeniacus          Elephas namadicus </span></a>
+<a class="sourceLine" id="cb11-114" data-line-number="114"><span class="co">#&gt;                    7654243                    7654244 </span></a>
+<a class="sourceLine" id="cb11-115" data-line-number="115"><span class="co">#&gt;               Elephas zulu         Elephas bombifrons </span></a>
+<a class="sourceLine" id="cb11-116" data-line-number="116"><span class="co">#&gt;                    7654245                    3607197 </span></a>
+<a class="sourceLine" id="cb11-117" data-line-number="117"><span class="co">#&gt;         Elephas celebensis    Palaeoloxodon lomolinoi </span></a>
+<a class="sourceLine" id="cb11-118" data-line-number="118"><span class="co">#&gt;                    6144032                    7654246 </span></a>
+<a class="sourceLine" id="cb11-119" data-line-number="119"><span class="co">#&gt;            Elephas maximus </span></a>
+<a class="sourceLine" id="cb11-120" data-line-number="120"><span class="co">#&gt;                     541928 </span></a>
+<a class="sourceLine" id="cb11-121" data-line-number="121"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-122" data-line-number="122"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb11-123" data-line-number="123"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb11-124" data-line-number="124"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb11-125" data-line-number="125"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb11-126" data-line-number="126"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+<p>Sometimes, only some input taxon names are inclusive:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">make_datelife_query2</span>(<span class="dt">input =</span> <span class="kw">c</span>(<span class="st">&quot;Mus&quot;</span>, <span class="st">&quot;Mus musculus&quot;</span>),</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">                     <span class="dt">get_spp_from_taxon =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>),</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">                     <span class="dt">reference_taxonomy =</span> <span class="st">&quot;ott&quot;</span>)</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt; ---&gt; Phylo-processing 'input'.</span></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; * 'input' is not a phylogeny.</span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; ---&gt; Runnning TNRS to match input names to reference taxonomy (OTT).</span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="st">  </span><span class="er">|</span><span class="st">                                                                      </span><span class="er">|</span><span class="st">   </span><span class="dv">0</span>%</a>
+<a class="sourceLine" id="cb12-10" data-line-number="10">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="st">  </span><span class="er">|===================================</span><span class="st">                                   </span><span class="er">|</span><span class="st">  </span><span class="dv">50</span>%</a>
+<a class="sourceLine" id="cb12-12" data-line-number="12">  <span class="op">|</span><span class="st">                                                                            </span></a>
+<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="st">  </span><span class="er">|======================================================================|</span><span class="st"> </span><span class="dv">100</span>%</a>
+<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="co">#&gt; ---&gt; Getting species for the following taxon names :Mus.</span></a>
+<a class="sourceLine" id="cb12-15" data-line-number="15"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within genus 'Mus' with OTT id number = 1068778.</span></a>
+<a class="sourceLine" id="cb12-16" data-line-number="16"><span class="co">#&gt; * Found the following taxonomic ranks: species, subspecies, no rank - terminal, no rank.</span></a>
+<a class="sourceLine" id="cb12-17" data-line-number="17"><span class="co">#&gt; * There are 20 subspecies.</span></a>
+<a class="sourceLine" id="cb12-18" data-line-number="18"><span class="co">#&gt; * There are 84 total species.</span></a>
+<a class="sourceLine" id="cb12-19" data-line-number="19"><span class="co">#&gt; * There are 60 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb12-20" data-line-number="20"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 60 species names within genus 'Mus' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb12-21" data-line-number="21"><span class="co">#&gt; ---&gt; Adding species data from inclusive taxon names.</span></a>
+<a class="sourceLine" id="cb12-22" data-line-number="22"><span class="co">#&gt; $cleaned_names</span></a>
+<a class="sourceLine" id="cb12-23" data-line-number="23"><span class="co">#&gt; [1] &quot;Mus musculus&quot; &quot;Mus&quot;         </span></a>
+<a class="sourceLine" id="cb12-24" data-line-number="24"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb12-25" data-line-number="25"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb12-26" data-line-number="26"><span class="co">#&gt;                                           </span></a>
+<a class="sourceLine" id="cb12-27" data-line-number="27"><span class="co">#&gt;                            &quot;Mus musculus&quot; </span></a>
+<a class="sourceLine" id="cb12-28" data-line-number="28"><span class="co">#&gt;                                   7067432 </span></a>
+<a class="sourceLine" id="cb12-29" data-line-number="29"><span class="co">#&gt;                     &quot;Mus cf. callewaerti&quot; </span></a>
+<a class="sourceLine" id="cb12-30" data-line-number="30"><span class="co">#&gt;                                   5857433 </span></a>
+<a class="sourceLine" id="cb12-31" data-line-number="31"><span class="co">#&gt;                  &quot;Mus cf. setulosus West&quot; </span></a>
+<a class="sourceLine" id="cb12-32" data-line-number="32"><span class="co">#&gt;                                   5857432 </span></a>
+<a class="sourceLine" id="cb12-33" data-line-number="33"><span class="co">#&gt;                &quot;Mus cf. tenellus TA-2014&quot; </span></a>
+<a class="sourceLine" id="cb12-34" data-line-number="34"><span class="co">#&gt;                                   5857436 </span></a>
+<a class="sourceLine" id="cb12-35" data-line-number="35"><span class="co">#&gt;                    &quot;Mus cf. baoulei West&quot; </span></a>
+<a class="sourceLine" id="cb12-36" data-line-number="36"><span class="co">#&gt;                                   5857434 </span></a>
+<a class="sourceLine" id="cb12-37" data-line-number="37"><span class="co">#&gt;             &quot;Mus cf. callewaerti TA-2014&quot; </span></a>
+<a class="sourceLine" id="cb12-38" data-line-number="38"><span class="co">#&gt;                                   3608901 </span></a>
+<a class="sourceLine" id="cb12-39" data-line-number="39"><span class="co">#&gt;                              &quot;Mus neavei&quot; </span></a>
+<a class="sourceLine" id="cb12-40" data-line-number="40"><span class="co">#&gt;                                    844274 </span></a>
+<a class="sourceLine" id="cb12-41" data-line-number="41"><span class="co">#&gt;                             &quot;Mus sorella&quot; </span></a>
+<a class="sourceLine" id="cb12-42" data-line-number="42"><span class="co">#&gt;                                    844277 </span></a>
+<a class="sourceLine" id="cb12-43" data-line-number="43"><span class="co">#&gt;                            &quot;Mus tenellus&quot; </span></a>
+<a class="sourceLine" id="cb12-44" data-line-number="44"><span class="co">#&gt;                                    844280 </span></a>
+<a class="sourceLine" id="cb12-45" data-line-number="45"><span class="co">#&gt;                     &quot;Mus cf. musculoides&quot; </span></a>
+<a class="sourceLine" id="cb12-46" data-line-number="46"><span class="co">#&gt;                                    844282 </span></a>
+<a class="sourceLine" id="cb12-47" data-line-number="47"><span class="co">#&gt;                                &quot;Mus bufo&quot; </span></a>
+<a class="sourceLine" id="cb12-48" data-line-number="48"><span class="co">#&gt;                                   3608883 </span></a>
+<a class="sourceLine" id="cb12-49" data-line-number="49"><span class="co">#&gt;                         &quot;Mus callewaerti&quot; </span></a>
+<a class="sourceLine" id="cb12-50" data-line-number="50"><span class="co">#&gt;                                   5857435 </span></a>
+<a class="sourceLine" id="cb12-51" data-line-number="51"><span class="co">#&gt;                             &quot;Mus mahomet&quot; </span></a>
+<a class="sourceLine" id="cb12-52" data-line-number="52"><span class="co">#&gt;                                   7067433 </span></a>
+<a class="sourceLine" id="cb12-53" data-line-number="53"><span class="co">#&gt; &quot;Mus sp. musculoides-minutoides DPL-2017&quot; </span></a>
+<a class="sourceLine" id="cb12-54" data-line-number="54"><span class="co">#&gt;                                    369735 </span></a>
+<a class="sourceLine" id="cb12-55" data-line-number="55"><span class="co">#&gt;                             &quot;Mus baoulei&quot; </span></a>
+<a class="sourceLine" id="cb12-56" data-line-number="56"><span class="co">#&gt;                                    403204 </span></a>
+<a class="sourceLine" id="cb12-57" data-line-number="57"><span class="co">#&gt;                               &quot;Mus emesi&quot; </span></a>
+<a class="sourceLine" id="cb12-58" data-line-number="58"><span class="co">#&gt;                                    996648 </span></a>
+<a class="sourceLine" id="cb12-59" data-line-number="59"><span class="co">#&gt;                         &quot;Mus musculoides&quot; </span></a>
+<a class="sourceLine" id="cb12-60" data-line-number="60"><span class="co">#&gt;                                   1000695 </span></a>
+<a class="sourceLine" id="cb12-61" data-line-number="61"><span class="co">#&gt;                             &quot;Mus indutus&quot; </span></a>
+<a class="sourceLine" id="cb12-62" data-line-number="62"><span class="co">#&gt;                                    759679 </span></a>
+<a class="sourceLine" id="cb12-63" data-line-number="63"><span class="co">#&gt;                            &quot;Mus mattheyi&quot; </span></a>
+<a class="sourceLine" id="cb12-64" data-line-number="64"><span class="co">#&gt;                                    845966 </span></a>
+<a class="sourceLine" id="cb12-65" data-line-number="65"><span class="co">#&gt;                          &quot;Mus minutoides&quot; </span></a>
+<a class="sourceLine" id="cb12-66" data-line-number="66"><span class="co">#&gt;                                    845980 </span></a>
+<a class="sourceLine" id="cb12-67" data-line-number="67"><span class="co">#&gt;                           &quot;Mus setulosus&quot; </span></a>
+<a class="sourceLine" id="cb12-68" data-line-number="68"><span class="co">#&gt;                                   1000702 </span></a>
+<a class="sourceLine" id="cb12-69" data-line-number="69"><span class="co">#&gt;                              &quot;Mus haussa&quot; </span></a>
+<a class="sourceLine" id="cb12-70" data-line-number="70"><span class="co">#&gt;                                   1000700 </span></a>
+<a class="sourceLine" id="cb12-71" data-line-number="71"><span class="co">#&gt;                        &quot;Mus cf. saxicola&quot; </span></a>
+<a class="sourceLine" id="cb12-72" data-line-number="72"><span class="co">#&gt;                                    887682 </span></a>
+<a class="sourceLine" id="cb12-73" data-line-number="73"><span class="co">#&gt;                         &quot;Mus shortridgei&quot; </span></a>
+<a class="sourceLine" id="cb12-74" data-line-number="74"><span class="co">#&gt;                                    542525 </span></a>
+<a class="sourceLine" id="cb12-75" data-line-number="75"><span class="co">#&gt;                            &quot;Mus saxicola&quot; </span></a>
+<a class="sourceLine" id="cb12-76" data-line-number="76"><span class="co">#&gt;                                    845970 </span></a>
+<a class="sourceLine" id="cb12-77" data-line-number="77"><span class="co">#&gt;                          &quot;Mus platythrix&quot; </span></a>
+<a class="sourceLine" id="cb12-78" data-line-number="78"><span class="co">#&gt;                                    348560 </span></a>
+<a class="sourceLine" id="cb12-79" data-line-number="79"><span class="co">#&gt;                          &quot;Mus terricolor&quot; </span></a>
+<a class="sourceLine" id="cb12-80" data-line-number="80"><span class="co">#&gt;                                    451263 </span></a>
+<a class="sourceLine" id="cb12-81" data-line-number="81"><span class="co">#&gt;                             &quot;Mus booduga&quot; </span></a>
+<a class="sourceLine" id="cb12-82" data-line-number="82"><span class="co">#&gt;                                    289304 </span></a>
+<a class="sourceLine" id="cb12-83" data-line-number="83"><span class="co">#&gt;                              &quot;Mus triton&quot; </span></a>
+<a class="sourceLine" id="cb12-84" data-line-number="84"><span class="co">#&gt;                                    542521 </span></a>
+<a class="sourceLine" id="cb12-85" data-line-number="85"><span class="co">#&gt;                             &quot;Mus spretus&quot; </span></a>
+<a class="sourceLine" id="cb12-86" data-line-number="86"><span class="co">#&gt;                                    542528 </span></a>
+<a class="sourceLine" id="cb12-87" data-line-number="87"><span class="co">#&gt;                              &quot;Mus cookii&quot; </span></a>
+<a class="sourceLine" id="cb12-88" data-line-number="88"><span class="co">#&gt;                                    845976 </span></a>
+<a class="sourceLine" id="cb12-89" data-line-number="89"><span class="co">#&gt;                          &quot;Mus spicilegus&quot; </span></a>
+<a class="sourceLine" id="cb12-90" data-line-number="90"><span class="co">#&gt;                                   1027340 </span></a>
+<a class="sourceLine" id="cb12-91" data-line-number="91"><span class="co">#&gt;                             &quot;Mus famulus&quot; </span></a>
+<a class="sourceLine" id="cb12-92" data-line-number="92"><span class="co">#&gt;                                    922493 </span></a>
+<a class="sourceLine" id="cb12-93" data-line-number="93"><span class="co">#&gt;                              &quot;Mus caroli&quot; </span></a>
+<a class="sourceLine" id="cb12-94" data-line-number="94"><span class="co">#&gt;                                   1010350 </span></a>
+<a class="sourceLine" id="cb12-95" data-line-number="95"><span class="co">#&gt;                        &quot;Mus fragilicauda&quot; </span></a>
+<a class="sourceLine" id="cb12-96" data-line-number="96"><span class="co">#&gt;                                    185328 </span></a>
+<a class="sourceLine" id="cb12-97" data-line-number="97"><span class="co">#&gt;                       &quot;Mus crociduroides&quot; </span></a>
+<a class="sourceLine" id="cb12-98" data-line-number="98"><span class="co">#&gt;                                    542493 </span></a>
+<a class="sourceLine" id="cb12-99" data-line-number="99"><span class="co">#&gt;                              &quot;Mus pahari&quot; </span></a>
+<a class="sourceLine" id="cb12-100" data-line-number="100"><span class="co">#&gt;                                   6144910 </span></a>
+<a class="sourceLine" id="cb12-101" data-line-number="101"><span class="co">#&gt;                       &quot;Mus terraereginae&quot; </span></a>
+<a class="sourceLine" id="cb12-102" data-line-number="102"><span class="co">#&gt;                                   7654766 </span></a>
+<a class="sourceLine" id="cb12-103" data-line-number="103"><span class="co">#&gt;                             &quot;Mus aegaeus&quot; </span></a>
+<a class="sourceLine" id="cb12-104" data-line-number="104"><span class="co">#&gt;                                   7654768 </span></a>
+<a class="sourceLine" id="cb12-105" data-line-number="105"><span class="co">#&gt;                              &quot;Mus camini&quot; </span></a>
+<a class="sourceLine" id="cb12-106" data-line-number="106"><span class="co">#&gt;                                   7654773 </span></a>
+<a class="sourceLine" id="cb12-107" data-line-number="107"><span class="co">#&gt;                             &quot;Mus paulina&quot; </span></a>
+<a class="sourceLine" id="cb12-108" data-line-number="108"><span class="co">#&gt;                                   7654776 </span></a>
+<a class="sourceLine" id="cb12-109" data-line-number="109"><span class="co">#&gt;                            &quot;Mus vulpinus&quot; </span></a>
+<a class="sourceLine" id="cb12-110" data-line-number="110"><span class="co">#&gt;                                   7654767 </span></a>
+<a class="sourceLine" id="cb12-111" data-line-number="111"><span class="co">#&gt;                          &quot;Mus arboricola&quot; </span></a>
+<a class="sourceLine" id="cb12-112" data-line-number="112"><span class="co">#&gt;                                   7654772 </span></a>
+<a class="sourceLine" id="cb12-113" data-line-number="113"><span class="co">#&gt;                             &quot;Mus nigrita&quot; </span></a>
+<a class="sourceLine" id="cb12-114" data-line-number="114"><span class="co">#&gt;                                   7654775 </span></a>
+<a class="sourceLine" id="cb12-115" data-line-number="115"><span class="co">#&gt;                          &quot;Mus tomentosus&quot; </span></a>
+<a class="sourceLine" id="cb12-116" data-line-number="116"><span class="co">#&gt;                                   7654774 </span></a>
+<a class="sourceLine" id="cb12-117" data-line-number="117"><span class="co">#&gt;                          &quot;Mus proconodon&quot; </span></a>
+<a class="sourceLine" id="cb12-118" data-line-number="118"><span class="co">#&gt;                                   7654771 </span></a>
+<a class="sourceLine" id="cb12-119" data-line-number="119"><span class="co">#&gt;                      &quot;Mus microdontoides&quot; </span></a>
+<a class="sourceLine" id="cb12-120" data-line-number="120"><span class="co">#&gt;                                   7654770 </span></a>
+<a class="sourceLine" id="cb12-121" data-line-number="121"><span class="co">#&gt;                           &quot;Mus leptosoma&quot; </span></a>
+<a class="sourceLine" id="cb12-122" data-line-number="122"><span class="co">#&gt;                                   3608899 </span></a>
+<a class="sourceLine" id="cb12-123" data-line-number="123"><span class="co">#&gt;                           &quot;Mus oubanguii&quot; </span></a>
+<a class="sourceLine" id="cb12-124" data-line-number="124"><span class="co">#&gt;                                   3608881 </span></a>
+<a class="sourceLine" id="cb12-125" data-line-number="125"><span class="co">#&gt;                             &quot;Mus goundae&quot; </span></a>
+<a class="sourceLine" id="cb12-126" data-line-number="126"><span class="co">#&gt;                                   3608904 </span></a>
+<a class="sourceLine" id="cb12-127" data-line-number="127"><span class="co">#&gt;                            &quot;Mus orangiae&quot; </span></a>
+<a class="sourceLine" id="cb12-128" data-line-number="128"><span class="co">#&gt;                                   3608880 </span></a>
+<a class="sourceLine" id="cb12-129" data-line-number="129"><span class="co">#&gt;                           &quot;Mus phillipsi&quot; </span></a>
+<a class="sourceLine" id="cb12-130" data-line-number="130"><span class="co">#&gt;                                   3608890 </span></a>
+<a class="sourceLine" id="cb12-131" data-line-number="131"><span class="co">#&gt;                             &quot;Mus setzeri&quot; </span></a>
+<a class="sourceLine" id="cb12-132" data-line-number="132"><span class="co">#&gt;                                   3608886 </span></a>
+<a class="sourceLine" id="cb12-133" data-line-number="133"><span class="co">#&gt;                          &quot;Mus fernandoni&quot; </span></a>
+<a class="sourceLine" id="cb12-134" data-line-number="134"><span class="co">#&gt;                                   3608885 </span></a>
+<a class="sourceLine" id="cb12-135" data-line-number="135"><span class="co">#&gt;                             &quot;Mus vulcani&quot; </span></a>
+<a class="sourceLine" id="cb12-136" data-line-number="136"><span class="co">#&gt;                                   3608874 </span></a>
+<a class="sourceLine" id="cb12-137" data-line-number="137"><span class="co">#&gt;                              &quot;Mus mayori&quot; </span></a>
+<a class="sourceLine" id="cb12-138" data-line-number="138"><span class="co">#&gt;                                   7654769 </span></a>
+<a class="sourceLine" id="cb12-139" data-line-number="139"><span class="co">#&gt;                            &quot;Mus colletti&quot; </span></a>
+<a class="sourceLine" id="cb12-140" data-line-number="140"><span class="co">#&gt;                                   6144906 </span></a>
+<a class="sourceLine" id="cb12-141" data-line-number="141"><span class="co">#&gt;                             &quot;Mus canguru&quot; </span></a>
+<a class="sourceLine" id="cb12-142" data-line-number="142"><span class="co">#&gt;                                    542509 </span></a>
+<a class="sourceLine" id="cb12-143" data-line-number="143"><span class="co">#&gt;                            &quot;Mus musculus&quot; </span></a>
+<a class="sourceLine" id="cb12-144" data-line-number="144"><span class="co">#&gt;                                    542519 </span></a>
+<a class="sourceLine" id="cb12-145" data-line-number="145"><span class="co">#&gt;                          &quot;Mus cervicolor&quot; </span></a>
+<a class="sourceLine" id="cb12-146" data-line-number="146"><span class="co">#&gt;                                    845973 </span></a>
+<a class="sourceLine" id="cb12-147" data-line-number="147"><span class="co">#&gt;                         &quot;Mus macedonicus&quot; </span></a>
+<a class="sourceLine" id="cb12-148" data-line-number="148"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb12-149" data-line-number="149"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb12-150" data-line-number="150"><span class="co">#&gt;                                                             Mus cf. callewaerti </span></a>
+<a class="sourceLine" id="cb12-151" data-line-number="151"><span class="co">#&gt;                                  542509                                 7067432 </span></a>
+<a class="sourceLine" id="cb12-152" data-line-number="152"><span class="co">#&gt;                  Mus cf. setulosus West                Mus cf. tenellus TA-2014 </span></a>
+<a class="sourceLine" id="cb12-153" data-line-number="153"><span class="co">#&gt;                                 5857433                                 5857432 </span></a>
+<a class="sourceLine" id="cb12-154" data-line-number="154"><span class="co">#&gt;                    Mus cf. baoulei West             Mus cf. callewaerti TA-2014 </span></a>
+<a class="sourceLine" id="cb12-155" data-line-number="155"><span class="co">#&gt;                                 5857436                                 5857434 </span></a>
+<a class="sourceLine" id="cb12-156" data-line-number="156"><span class="co">#&gt;                              Mus neavei                             Mus sorella </span></a>
+<a class="sourceLine" id="cb12-157" data-line-number="157"><span class="co">#&gt;                                 3608901                                  844274 </span></a>
+<a class="sourceLine" id="cb12-158" data-line-number="158"><span class="co">#&gt;                            Mus tenellus                     Mus cf. musculoides </span></a>
+<a class="sourceLine" id="cb12-159" data-line-number="159"><span class="co">#&gt;                                  844277                                  844280 </span></a>
+<a class="sourceLine" id="cb12-160" data-line-number="160"><span class="co">#&gt;                                Mus bufo                         Mus callewaerti </span></a>
+<a class="sourceLine" id="cb12-161" data-line-number="161"><span class="co">#&gt;                                  844282                                 3608883 </span></a>
+<a class="sourceLine" id="cb12-162" data-line-number="162"><span class="co">#&gt;                             Mus mahomet Mus sp. musculoides-minutoides DPL-2017 </span></a>
+<a class="sourceLine" id="cb12-163" data-line-number="163"><span class="co">#&gt;                                 5857435                                 7067433 </span></a>
+<a class="sourceLine" id="cb12-164" data-line-number="164"><span class="co">#&gt;                             Mus baoulei                               Mus emesi </span></a>
+<a class="sourceLine" id="cb12-165" data-line-number="165"><span class="co">#&gt;                                  369735                                  403204 </span></a>
+<a class="sourceLine" id="cb12-166" data-line-number="166"><span class="co">#&gt;                         Mus musculoides                             Mus indutus </span></a>
+<a class="sourceLine" id="cb12-167" data-line-number="167"><span class="co">#&gt;                                  996648                                 1000695 </span></a>
+<a class="sourceLine" id="cb12-168" data-line-number="168"><span class="co">#&gt;                            Mus mattheyi                          Mus minutoides </span></a>
+<a class="sourceLine" id="cb12-169" data-line-number="169"><span class="co">#&gt;                                  759679                                  845966 </span></a>
+<a class="sourceLine" id="cb12-170" data-line-number="170"><span class="co">#&gt;                           Mus setulosus                              Mus haussa </span></a>
+<a class="sourceLine" id="cb12-171" data-line-number="171"><span class="co">#&gt;                                  845980                                 1000702 </span></a>
+<a class="sourceLine" id="cb12-172" data-line-number="172"><span class="co">#&gt;                        Mus cf. saxicola                         Mus shortridgei </span></a>
+<a class="sourceLine" id="cb12-173" data-line-number="173"><span class="co">#&gt;                                 1000700                                  887682 </span></a>
+<a class="sourceLine" id="cb12-174" data-line-number="174"><span class="co">#&gt;                            Mus saxicola                          Mus platythrix </span></a>
+<a class="sourceLine" id="cb12-175" data-line-number="175"><span class="co">#&gt;                                  542525                                  845970 </span></a>
+<a class="sourceLine" id="cb12-176" data-line-number="176"><span class="co">#&gt;                          Mus terricolor                             Mus booduga </span></a>
+<a class="sourceLine" id="cb12-177" data-line-number="177"><span class="co">#&gt;                                  348560                                  451263 </span></a>
+<a class="sourceLine" id="cb12-178" data-line-number="178"><span class="co">#&gt;                              Mus triton                             Mus spretus </span></a>
+<a class="sourceLine" id="cb12-179" data-line-number="179"><span class="co">#&gt;                                  289304                                  542521 </span></a>
+<a class="sourceLine" id="cb12-180" data-line-number="180"><span class="co">#&gt;                              Mus cookii                          Mus spicilegus </span></a>
+<a class="sourceLine" id="cb12-181" data-line-number="181"><span class="co">#&gt;                                  542528                                  845976 </span></a>
+<a class="sourceLine" id="cb12-182" data-line-number="182"><span class="co">#&gt;                             Mus famulus                              Mus caroli </span></a>
+<a class="sourceLine" id="cb12-183" data-line-number="183"><span class="co">#&gt;                                 1027340                                  922493 </span></a>
+<a class="sourceLine" id="cb12-184" data-line-number="184"><span class="co">#&gt;                        Mus fragilicauda                       Mus crociduroides </span></a>
+<a class="sourceLine" id="cb12-185" data-line-number="185"><span class="co">#&gt;                                 1010350                                  185328 </span></a>
+<a class="sourceLine" id="cb12-186" data-line-number="186"><span class="co">#&gt;                              Mus pahari                       Mus terraereginae </span></a>
+<a class="sourceLine" id="cb12-187" data-line-number="187"><span class="co">#&gt;                                  542493                                 6144910 </span></a>
+<a class="sourceLine" id="cb12-188" data-line-number="188"><span class="co">#&gt;                             Mus aegaeus                              Mus camini </span></a>
+<a class="sourceLine" id="cb12-189" data-line-number="189"><span class="co">#&gt;                                 7654766                                 7654768 </span></a>
+<a class="sourceLine" id="cb12-190" data-line-number="190"><span class="co">#&gt;                             Mus paulina                            Mus vulpinus </span></a>
+<a class="sourceLine" id="cb12-191" data-line-number="191"><span class="co">#&gt;                                 7654773                                 7654776 </span></a>
+<a class="sourceLine" id="cb12-192" data-line-number="192"><span class="co">#&gt;                          Mus arboricola                             Mus nigrita </span></a>
+<a class="sourceLine" id="cb12-193" data-line-number="193"><span class="co">#&gt;                                 7654767                                 7654772 </span></a>
+<a class="sourceLine" id="cb12-194" data-line-number="194"><span class="co">#&gt;                          Mus tomentosus                          Mus proconodon </span></a>
+<a class="sourceLine" id="cb12-195" data-line-number="195"><span class="co">#&gt;                                 7654775                                 7654774 </span></a>
+<a class="sourceLine" id="cb12-196" data-line-number="196"><span class="co">#&gt;                      Mus microdontoides                           Mus leptosoma </span></a>
+<a class="sourceLine" id="cb12-197" data-line-number="197"><span class="co">#&gt;                                 7654771                                 7654770 </span></a>
+<a class="sourceLine" id="cb12-198" data-line-number="198"><span class="co">#&gt;                           Mus oubanguii                             Mus goundae </span></a>
+<a class="sourceLine" id="cb12-199" data-line-number="199"><span class="co">#&gt;                                 3608899                                 3608881 </span></a>
+<a class="sourceLine" id="cb12-200" data-line-number="200"><span class="co">#&gt;                            Mus orangiae                           Mus phillipsi </span></a>
+<a class="sourceLine" id="cb12-201" data-line-number="201"><span class="co">#&gt;                                 3608904                                 3608880 </span></a>
+<a class="sourceLine" id="cb12-202" data-line-number="202"><span class="co">#&gt;                             Mus setzeri                          Mus fernandoni </span></a>
+<a class="sourceLine" id="cb12-203" data-line-number="203"><span class="co">#&gt;                                 3608890                                 3608886 </span></a>
+<a class="sourceLine" id="cb12-204" data-line-number="204"><span class="co">#&gt;                             Mus vulcani                              Mus mayori </span></a>
+<a class="sourceLine" id="cb12-205" data-line-number="205"><span class="co">#&gt;                                 3608885                                 3608874 </span></a>
+<a class="sourceLine" id="cb12-206" data-line-number="206"><span class="co">#&gt;                            Mus colletti                             Mus canguru </span></a>
+<a class="sourceLine" id="cb12-207" data-line-number="207"><span class="co">#&gt;                                 7654769                                 6144906 </span></a>
+<a class="sourceLine" id="cb12-208" data-line-number="208"><span class="co">#&gt;                            Mus musculus                          Mus cervicolor </span></a>
+<a class="sourceLine" id="cb12-209" data-line-number="209"><span class="co">#&gt;                                  542509                                  542519 </span></a>
+<a class="sourceLine" id="cb12-210" data-line-number="210"><span class="co">#&gt;                         Mus macedonicus </span></a>
+<a class="sourceLine" id="cb12-211" data-line-number="211"><span class="co">#&gt;                                  845973 </span></a>
+<a class="sourceLine" id="cb12-212" data-line-number="212"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb12-213" data-line-number="213"><span class="co">#&gt; $phy</span></a>
+<a class="sourceLine" id="cb12-214" data-line-number="214"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb12-215" data-line-number="215"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb12-216" data-line-number="216"><span class="co">#&gt; attr(,&quot;class&quot;)</span></a>
+<a class="sourceLine" id="cb12-217" data-line-number="217"><span class="co">#&gt; [1] &quot;datelifeQuery&quot;</span></a></code></pre></div>
+</div>
+<div id="the-function-get_opentree_species" class="section level3">
+<h3>The function <code>get_opentree_species()</code></h3>
+<p>The function <code>get_opentree_species()</code> works under the hood to extract species names within a given taxonomic group.</p>
+<p>This is how it fails:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">get_opentree_species</span>()</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; * Both 'taxon_name' and 'ott_id' arguments are missing.</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#&gt; Please provide at least one - returning NA.</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="kw">get_opentree_species</span>(<span class="dt">taxon_name =</span> <span class="kw">c</span>(<span class="st">&quot;Canis&quot;</span>, <span class="st">&quot;Elephas&quot;</span>))</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; This function can only process one taxon name at a time.</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; Please provide just one taxon name - returning NA.</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="kw">get_opentree_species</span>(<span class="dt">ott_id =</span> <span class="kw">c</span>(<span class="dv">372706</span>, <span class="dv">541927</span>))</a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt; This function can only process one OTT id at a time.</span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt; Please provide just one OTT id number - returning NA.</span></a>
+<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt; [1] NA</span></a>
+<a class="sourceLine" id="cb13-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co"># TOFIX:</span></a>
+<a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co"># datelife::get_opentree_species(taxon_name = &quot;Canis&quot;, ott_id = 541927)</span></a></code></pre></div>
+<p>By default, it only return species that are in OpenTree’s synthetic tree:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">get_opentree_species</span>(<span class="dt">taxon_name =</span> <span class="st">&quot;Canis&quot;</span>)</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt; ---&gt; Obtaining taxonomic info for all children within OTT taxon, genus 'Canis' (input name = Canis), with OTT id number = 372706.</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt; * Found the following taxonomic ranks: species, subspecies, no rank - terminal, no rank.</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt; * There are 21 subspecies.</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; * There are 42 total species.</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; * There are 36 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 36 species names within genus 'Canis' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt;                      3612500                      5835572 </span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt;                &quot;Canis dirus&quot;               &quot;Canis anthus&quot; </span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt;                       113383                       752755 </span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt;                &quot;Canis rufus&quot;             &quot;Canis simensis&quot; </span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co">#&gt;                       621168                       621176 </span></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt;               &quot;Canis aureus&quot;              &quot;Canis adustus&quot; </span></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt;                       247331                       346723 </span></a>
+<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt;              &quot;Canis latrans&quot;         &quot;Canis himalayensis&quot; </span></a>
+<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt;                       346728                      4941918 </span></a>
+<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="co">#&gt;               &quot;Canis indica&quot; &quot;Canis environmental sample&quot; </span></a>
+<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt;                      7655930                      7655947 </span></a>
+<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt;            &quot;Canis ameghinoi&quot;             &quot;Canis nehringi&quot; </span></a>
+<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt;                      7655949                      7655942 </span></a>
+<a class="sourceLine" id="cb14-22" data-line-number="22"><span class="co">#&gt;            &quot;Canis palustris&quot;                &quot;Canis lanka&quot; </span></a>
+<a class="sourceLine" id="cb14-23" data-line-number="23"><span class="co">#&gt;                      7655948                      7655939 </span></a>
+<a class="sourceLine" id="cb14-24" data-line-number="24"><span class="co">#&gt;             &quot;Canis pallipes&quot;                 &quot;Canis gezi&quot; </span></a>
+<a class="sourceLine" id="cb14-25" data-line-number="25"><span class="co">#&gt;                      7655951                      7655935 </span></a>
+<a class="sourceLine" id="cb14-26" data-line-number="26"><span class="co">#&gt;            &quot;Canis primaevus&quot;            &quot;Canis chrysurus&quot; </span></a>
+<a class="sourceLine" id="cb14-27" data-line-number="27"><span class="co">#&gt;                      7655937                      7655941 </span></a>
+<a class="sourceLine" id="cb14-28" data-line-number="28"><span class="co">#&gt;          &quot;Canis dukhunensis&quot;               &quot;Canis kokree&quot; </span></a>
+<a class="sourceLine" id="cb14-29" data-line-number="29"><span class="co">#&gt;                      7655952                      7655940 </span></a>
+<a class="sourceLine" id="cb14-30" data-line-number="30"><span class="co">#&gt;              &quot;Canis sladeni&quot;           &quot;Canis himalaicus&quot; </span></a>
+<a class="sourceLine" id="cb14-31" data-line-number="31"><span class="co">#&gt;                      7655934                      7655936 </span></a>
+<a class="sourceLine" id="cb14-32" data-line-number="32"><span class="co">#&gt;               &quot;Canis chanco&quot;         &quot;Canis curvipalatus&quot; </span></a>
+<a class="sourceLine" id="cb14-33" data-line-number="33"><span class="co">#&gt;                      7655943                      7655931 </span></a>
+<a class="sourceLine" id="cb14-34" data-line-number="34"><span class="co">#&gt;            &quot;Canis lateralis&quot;           &quot;Canis argentinus&quot; </span></a>
+<a class="sourceLine" id="cb14-35" data-line-number="35"><span class="co">#&gt;                      7655953                      7655946 </span></a>
+<a class="sourceLine" id="cb14-36" data-line-number="36"><span class="co">#&gt;           &quot;Canis tarijensis&quot;                &quot;Canis naria&quot; </span></a>
+<a class="sourceLine" id="cb14-37" data-line-number="37"><span class="co">#&gt;                      7655950                      7655933 </span></a>
+<a class="sourceLine" id="cb14-38" data-line-number="38"><span class="co">#&gt;             &quot;Canis peruanus&quot;             &quot;Canis cautleyi&quot; </span></a>
+<a class="sourceLine" id="cb14-39" data-line-number="39"><span class="co">#&gt;                      7655954                      6145382 </span></a>
+<a class="sourceLine" id="cb14-40" data-line-number="40"><span class="co">#&gt;              &quot;Canis ursinus&quot;           &quot;Canis antarticus&quot; </span></a>
+<a class="sourceLine" id="cb14-41" data-line-number="41"><span class="co">#&gt;                      6145383                      7655938 </span></a>
+<a class="sourceLine" id="cb14-42" data-line-number="42"><span class="co">#&gt;                &quot;Canis dingo&quot;             &quot;Canis etruscus&quot; </span></a>
+<a class="sourceLine" id="cb14-43" data-line-number="43"><span class="co">#&gt;                       666235                       247341 </span></a>
+<a class="sourceLine" id="cb14-44" data-line-number="44"><span class="co">#&gt;            &quot;Canis mesomelas&quot;                &quot;Canis lupus&quot; </span></a>
+<a class="sourceLine" id="cb14-45" data-line-number="45"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb14-46" data-line-number="46"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb14-47" data-line-number="47"><span class="co">#&gt;                Canis dirus               Canis anthus </span></a>
+<a class="sourceLine" id="cb14-48" data-line-number="48"><span class="co">#&gt;                    3612500                    5835572 </span></a>
+<a class="sourceLine" id="cb14-49" data-line-number="49"><span class="co">#&gt;                Canis rufus             Canis simensis </span></a>
+<a class="sourceLine" id="cb14-50" data-line-number="50"><span class="co">#&gt;                     113383                     752755 </span></a>
+<a class="sourceLine" id="cb14-51" data-line-number="51"><span class="co">#&gt;               Canis aureus              Canis adustus </span></a>
+<a class="sourceLine" id="cb14-52" data-line-number="52"><span class="co">#&gt;                     621168                     621176 </span></a>
+<a class="sourceLine" id="cb14-53" data-line-number="53"><span class="co">#&gt;              Canis latrans         Canis himalayensis </span></a>
+<a class="sourceLine" id="cb14-54" data-line-number="54"><span class="co">#&gt;                     247331                     346723 </span></a>
+<a class="sourceLine" id="cb14-55" data-line-number="55"><span class="co">#&gt;               Canis indica Canis environmental sample </span></a>
+<a class="sourceLine" id="cb14-56" data-line-number="56"><span class="co">#&gt;                     346728                    4941918 </span></a>
+<a class="sourceLine" id="cb14-57" data-line-number="57"><span class="co">#&gt;            Canis ameghinoi             Canis nehringi </span></a>
+<a class="sourceLine" id="cb14-58" data-line-number="58"><span class="co">#&gt;                    7655930                    7655947 </span></a>
+<a class="sourceLine" id="cb14-59" data-line-number="59"><span class="co">#&gt;            Canis palustris                Canis lanka </span></a>
+<a class="sourceLine" id="cb14-60" data-line-number="60"><span class="co">#&gt;                    7655949                    7655942 </span></a>
+<a class="sourceLine" id="cb14-61" data-line-number="61"><span class="co">#&gt;             Canis pallipes                 Canis gezi </span></a>
+<a class="sourceLine" id="cb14-62" data-line-number="62"><span class="co">#&gt;                    7655948                    7655939 </span></a>
+<a class="sourceLine" id="cb14-63" data-line-number="63"><span class="co">#&gt;            Canis primaevus            Canis chrysurus </span></a>
+<a class="sourceLine" id="cb14-64" data-line-number="64"><span class="co">#&gt;                    7655951                    7655935 </span></a>
+<a class="sourceLine" id="cb14-65" data-line-number="65"><span class="co">#&gt;          Canis dukhunensis               Canis kokree </span></a>
+<a class="sourceLine" id="cb14-66" data-line-number="66"><span class="co">#&gt;                    7655937                    7655941 </span></a>
+<a class="sourceLine" id="cb14-67" data-line-number="67"><span class="co">#&gt;              Canis sladeni           Canis himalaicus </span></a>
+<a class="sourceLine" id="cb14-68" data-line-number="68"><span class="co">#&gt;                    7655952                    7655940 </span></a>
+<a class="sourceLine" id="cb14-69" data-line-number="69"><span class="co">#&gt;               Canis chanco         Canis curvipalatus </span></a>
+<a class="sourceLine" id="cb14-70" data-line-number="70"><span class="co">#&gt;                    7655934                    7655936 </span></a>
+<a class="sourceLine" id="cb14-71" data-line-number="71"><span class="co">#&gt;            Canis lateralis           Canis argentinus </span></a>
+<a class="sourceLine" id="cb14-72" data-line-number="72"><span class="co">#&gt;                    7655943                    7655931 </span></a>
+<a class="sourceLine" id="cb14-73" data-line-number="73"><span class="co">#&gt;           Canis tarijensis                Canis naria </span></a>
+<a class="sourceLine" id="cb14-74" data-line-number="74"><span class="co">#&gt;                    7655953                    7655946 </span></a>
+<a class="sourceLine" id="cb14-75" data-line-number="75"><span class="co">#&gt;             Canis peruanus             Canis cautleyi </span></a>
+<a class="sourceLine" id="cb14-76" data-line-number="76"><span class="co">#&gt;                    7655950                    7655933 </span></a>
+<a class="sourceLine" id="cb14-77" data-line-number="77"><span class="co">#&gt;              Canis ursinus           Canis antarticus </span></a>
+<a class="sourceLine" id="cb14-78" data-line-number="78"><span class="co">#&gt;                    7655954                    6145382 </span></a>
+<a class="sourceLine" id="cb14-79" data-line-number="79"><span class="co">#&gt;                Canis dingo             Canis etruscus </span></a>
+<a class="sourceLine" id="cb14-80" data-line-number="80"><span class="co">#&gt;                    6145383                    7655938 </span></a>
+<a class="sourceLine" id="cb14-81" data-line-number="81"><span class="co">#&gt;            Canis mesomelas                Canis lupus </span></a>
+<a class="sourceLine" id="cb14-82" data-line-number="82"><span class="co">#&gt;                     666235                     247341</span></a></code></pre></div>
+<p>You can override that behaviour and get all species by setting <code>synth_tree_only = FALSE</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">get_opentree_species</span>(<span class="dt">taxon_name =</span> <span class="st">&quot;Canis&quot;</span>, <span class="dt">synth_tree_only =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="co">#&gt; ---&gt; Obtaining taxonomic info for all children within OTT taxon, genus 'Canis' (input name = Canis), with OTT id number = 372706.</span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="co">#&gt; * Found the following taxonomic ranks: species, subspecies, no rank - terminal, no rank.</span></a>
+<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="co">#&gt; * There are 21 subspecies.</span></a>
+<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="co">#&gt; * There are 42 total species.</span></a>
+<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="co">#&gt; * There are 36 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="co">#&gt; ---&gt; Returning taxonomic info for 42 species names within genus 'Canis'.</span></a>
+<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="co">#&gt;                      3612500                      5835572 </span></a>
+<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt;                &quot;Canis dirus&quot;               &quot;Canis anthus&quot; </span></a>
+<a class="sourceLine" id="cb15-11" data-line-number="11"><span class="co">#&gt;                       113383                       752755 </span></a>
+<a class="sourceLine" id="cb15-12" data-line-number="12"><span class="co">#&gt;                &quot;Canis rufus&quot;             &quot;Canis simensis&quot; </span></a>
+<a class="sourceLine" id="cb15-13" data-line-number="13"><span class="co">#&gt;                       621168                       621176 </span></a>
+<a class="sourceLine" id="cb15-14" data-line-number="14"><span class="co">#&gt;               &quot;Canis aureus&quot;              &quot;Canis adustus&quot; </span></a>
+<a class="sourceLine" id="cb15-15" data-line-number="15"><span class="co">#&gt;                       247331                       346723 </span></a>
+<a class="sourceLine" id="cb15-16" data-line-number="16"><span class="co">#&gt;              &quot;Canis latrans&quot;         &quot;Canis himalayensis&quot; </span></a>
+<a class="sourceLine" id="cb15-17" data-line-number="17"><span class="co">#&gt;                       346728                      5925604 </span></a>
+<a class="sourceLine" id="cb15-18" data-line-number="18"><span class="co">#&gt;               &quot;Canis indica&quot;         &quot;Canis sp. KEB-2016&quot; </span></a>
+<a class="sourceLine" id="cb15-19" data-line-number="19"><span class="co">#&gt;                       470950                      5338950 </span></a>
+<a class="sourceLine" id="cb15-20" data-line-number="20"><span class="co">#&gt;          &quot;Canis sp. CANInt1&quot;    &quot;Canis sp. Russia/33,500&quot; </span></a>
+<a class="sourceLine" id="cb15-21" data-line-number="21"><span class="co">#&gt;                       247325                      5338951 </span></a>
+<a class="sourceLine" id="cb15-22" data-line-number="22"><span class="co">#&gt;                  &quot;Canis sp.&quot;   &quot;Canis sp. Belgium/36,000&quot; </span></a>
+<a class="sourceLine" id="cb15-23" data-line-number="23"><span class="co">#&gt;                      4941918                      7655930 </span></a>
+<a class="sourceLine" id="cb15-24" data-line-number="24"><span class="co">#&gt; &quot;Canis environmental sample&quot;            &quot;Canis ameghinoi&quot; </span></a>
+<a class="sourceLine" id="cb15-25" data-line-number="25"><span class="co">#&gt;                      7655947                      7655949 </span></a>
+<a class="sourceLine" id="cb15-26" data-line-number="26"><span class="co">#&gt;             &quot;Canis nehringi&quot;            &quot;Canis palustris&quot; </span></a>
+<a class="sourceLine" id="cb15-27" data-line-number="27"><span class="co">#&gt;                      7655942                      7655948 </span></a>
+<a class="sourceLine" id="cb15-28" data-line-number="28"><span class="co">#&gt;                &quot;Canis lanka&quot;             &quot;Canis pallipes&quot; </span></a>
+<a class="sourceLine" id="cb15-29" data-line-number="29"><span class="co">#&gt;                      7655939                      7655951 </span></a>
+<a class="sourceLine" id="cb15-30" data-line-number="30"><span class="co">#&gt;                 &quot;Canis gezi&quot;            &quot;Canis primaevus&quot; </span></a>
+<a class="sourceLine" id="cb15-31" data-line-number="31"><span class="co">#&gt;                      7655935                      7655937 </span></a>
+<a class="sourceLine" id="cb15-32" data-line-number="32"><span class="co">#&gt;            &quot;Canis chrysurus&quot;          &quot;Canis dukhunensis&quot; </span></a>
+<a class="sourceLine" id="cb15-33" data-line-number="33"><span class="co">#&gt;                      7655941                      7655952 </span></a>
+<a class="sourceLine" id="cb15-34" data-line-number="34"><span class="co">#&gt;               &quot;Canis kokree&quot;              &quot;Canis sladeni&quot; </span></a>
+<a class="sourceLine" id="cb15-35" data-line-number="35"><span class="co">#&gt;                      7655940                      7655934 </span></a>
+<a class="sourceLine" id="cb15-36" data-line-number="36"><span class="co">#&gt;           &quot;Canis himalaicus&quot;               &quot;Canis chanco&quot; </span></a>
+<a class="sourceLine" id="cb15-37" data-line-number="37"><span class="co">#&gt;                      7655936                      7655943 </span></a>
+<a class="sourceLine" id="cb15-38" data-line-number="38"><span class="co">#&gt;         &quot;Canis curvipalatus&quot;            &quot;Canis lateralis&quot; </span></a>
+<a class="sourceLine" id="cb15-39" data-line-number="39"><span class="co">#&gt;                      7655931                      7655953 </span></a>
+<a class="sourceLine" id="cb15-40" data-line-number="40"><span class="co">#&gt;           &quot;Canis argentinus&quot;           &quot;Canis tarijensis&quot; </span></a>
+<a class="sourceLine" id="cb15-41" data-line-number="41"><span class="co">#&gt;                      7655946                      7655950 </span></a>
+<a class="sourceLine" id="cb15-42" data-line-number="42"><span class="co">#&gt;                &quot;Canis naria&quot;             &quot;Canis peruanus&quot; </span></a>
+<a class="sourceLine" id="cb15-43" data-line-number="43"><span class="co">#&gt;                      7655933                      7655954 </span></a>
+<a class="sourceLine" id="cb15-44" data-line-number="44"><span class="co">#&gt;             &quot;Canis cautleyi&quot;              &quot;Canis ursinus&quot; </span></a>
+<a class="sourceLine" id="cb15-45" data-line-number="45"><span class="co">#&gt;                      6145382                      6145383 </span></a>
+<a class="sourceLine" id="cb15-46" data-line-number="46"><span class="co">#&gt;           &quot;Canis antarticus&quot;                &quot;Canis dingo&quot; </span></a>
+<a class="sourceLine" id="cb15-47" data-line-number="47"><span class="co">#&gt;                      7655938                      3612504 </span></a>
+<a class="sourceLine" id="cb15-48" data-line-number="48"><span class="co">#&gt;             &quot;Canis etruscus&quot;             &quot;Canis spelaeus&quot; </span></a>
+<a class="sourceLine" id="cb15-49" data-line-number="49"><span class="co">#&gt;                       666235                       247341 </span></a>
+<a class="sourceLine" id="cb15-50" data-line-number="50"><span class="co">#&gt;            &quot;Canis mesomelas&quot;                &quot;Canis lupus&quot; </span></a>
+<a class="sourceLine" id="cb15-51" data-line-number="51"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb15-52" data-line-number="52"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb15-53" data-line-number="53"><span class="co">#&gt;                Canis dirus               Canis anthus </span></a>
+<a class="sourceLine" id="cb15-54" data-line-number="54"><span class="co">#&gt;                    3612500                    5835572 </span></a>
+<a class="sourceLine" id="cb15-55" data-line-number="55"><span class="co">#&gt;                Canis rufus             Canis simensis </span></a>
+<a class="sourceLine" id="cb15-56" data-line-number="56"><span class="co">#&gt;                     113383                     752755 </span></a>
+<a class="sourceLine" id="cb15-57" data-line-number="57"><span class="co">#&gt;               Canis aureus              Canis adustus </span></a>
+<a class="sourceLine" id="cb15-58" data-line-number="58"><span class="co">#&gt;                     621168                     621176 </span></a>
+<a class="sourceLine" id="cb15-59" data-line-number="59"><span class="co">#&gt;              Canis latrans         Canis himalayensis </span></a>
+<a class="sourceLine" id="cb15-60" data-line-number="60"><span class="co">#&gt;                     247331                     346723 </span></a>
+<a class="sourceLine" id="cb15-61" data-line-number="61"><span class="co">#&gt;               Canis indica         Canis sp. KEB-2016 </span></a>
+<a class="sourceLine" id="cb15-62" data-line-number="62"><span class="co">#&gt;                     346728                    5925604 </span></a>
+<a class="sourceLine" id="cb15-63" data-line-number="63"><span class="co">#&gt;          Canis sp. CANInt1    Canis sp. Russia/33,500 </span></a>
+<a class="sourceLine" id="cb15-64" data-line-number="64"><span class="co">#&gt;                     470950                    5338950 </span></a>
+<a class="sourceLine" id="cb15-65" data-line-number="65"><span class="co">#&gt;                  Canis sp.   Canis sp. Belgium/36,000 </span></a>
+<a class="sourceLine" id="cb15-66" data-line-number="66"><span class="co">#&gt;                     247325                    5338951 </span></a>
+<a class="sourceLine" id="cb15-67" data-line-number="67"><span class="co">#&gt; Canis environmental sample            Canis ameghinoi </span></a>
+<a class="sourceLine" id="cb15-68" data-line-number="68"><span class="co">#&gt;                    4941918                    7655930 </span></a>
+<a class="sourceLine" id="cb15-69" data-line-number="69"><span class="co">#&gt;             Canis nehringi            Canis palustris </span></a>
+<a class="sourceLine" id="cb15-70" data-line-number="70"><span class="co">#&gt;                    7655947                    7655949 </span></a>
+<a class="sourceLine" id="cb15-71" data-line-number="71"><span class="co">#&gt;                Canis lanka             Canis pallipes </span></a>
+<a class="sourceLine" id="cb15-72" data-line-number="72"><span class="co">#&gt;                    7655942                    7655948 </span></a>
+<a class="sourceLine" id="cb15-73" data-line-number="73"><span class="co">#&gt;                 Canis gezi            Canis primaevus </span></a>
+<a class="sourceLine" id="cb15-74" data-line-number="74"><span class="co">#&gt;                    7655939                    7655951 </span></a>
+<a class="sourceLine" id="cb15-75" data-line-number="75"><span class="co">#&gt;            Canis chrysurus          Canis dukhunensis </span></a>
+<a class="sourceLine" id="cb15-76" data-line-number="76"><span class="co">#&gt;                    7655935                    7655937 </span></a>
+<a class="sourceLine" id="cb15-77" data-line-number="77"><span class="co">#&gt;               Canis kokree              Canis sladeni </span></a>
+<a class="sourceLine" id="cb15-78" data-line-number="78"><span class="co">#&gt;                    7655941                    7655952 </span></a>
+<a class="sourceLine" id="cb15-79" data-line-number="79"><span class="co">#&gt;           Canis himalaicus               Canis chanco </span></a>
+<a class="sourceLine" id="cb15-80" data-line-number="80"><span class="co">#&gt;                    7655940                    7655934 </span></a>
+<a class="sourceLine" id="cb15-81" data-line-number="81"><span class="co">#&gt;         Canis curvipalatus            Canis lateralis </span></a>
+<a class="sourceLine" id="cb15-82" data-line-number="82"><span class="co">#&gt;                    7655936                    7655943 </span></a>
+<a class="sourceLine" id="cb15-83" data-line-number="83"><span class="co">#&gt;           Canis argentinus           Canis tarijensis </span></a>
+<a class="sourceLine" id="cb15-84" data-line-number="84"><span class="co">#&gt;                    7655931                    7655953 </span></a>
+<a class="sourceLine" id="cb15-85" data-line-number="85"><span class="co">#&gt;                Canis naria             Canis peruanus </span></a>
+<a class="sourceLine" id="cb15-86" data-line-number="86"><span class="co">#&gt;                    7655946                    7655950 </span></a>
+<a class="sourceLine" id="cb15-87" data-line-number="87"><span class="co">#&gt;             Canis cautleyi              Canis ursinus </span></a>
+<a class="sourceLine" id="cb15-88" data-line-number="88"><span class="co">#&gt;                    7655933                    7655954 </span></a>
+<a class="sourceLine" id="cb15-89" data-line-number="89"><span class="co">#&gt;           Canis antarticus                Canis dingo </span></a>
+<a class="sourceLine" id="cb15-90" data-line-number="90"><span class="co">#&gt;                    6145382                    6145383 </span></a>
+<a class="sourceLine" id="cb15-91" data-line-number="91"><span class="co">#&gt;             Canis etruscus             Canis spelaeus </span></a>
+<a class="sourceLine" id="cb15-92" data-line-number="92"><span class="co">#&gt;                    7655938                    3612504 </span></a>
+<a class="sourceLine" id="cb15-93" data-line-number="93"><span class="co">#&gt;            Canis mesomelas                Canis lupus </span></a>
+<a class="sourceLine" id="cb15-94" data-line-number="94"><span class="co">#&gt;                     666235                     247341</span></a></code></pre></div>
+<p>If you know the OTT id of your group, you can use it:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">get_opentree_species</span>(<span class="dt">ott_id =</span> <span class="dv">541927</span>)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within genus 'Elephas' with OTT id number = 541927.</span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="co">#&gt; * Found the following taxonomic ranks: subspecies, no rank, no rank - terminal, species.</span></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="co">#&gt; * There are 5 subspecies.</span></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="co">#&gt; * There are 8 total species.</span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co">#&gt; * There are 7 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 7 species names within genus 'Elephas' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt;                   7654243                   7654244                   7654245 </span></a>
+<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="co">#&gt;      &quot;Elephas armeniacus&quot;       &quot;Elephas namadicus&quot;            &quot;Elephas zulu&quot; </span></a>
+<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="co">#&gt;                   3607197                   6144032                   7654246 </span></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="co">#&gt;      &quot;Elephas bombifrons&quot;      &quot;Elephas celebensis&quot; &quot;Palaeoloxodon lomolinoi&quot; </span></a>
+<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="co">#&gt;                    541928 </span></a>
+<a class="sourceLine" id="cb16-14" data-line-number="14"><span class="co">#&gt;         &quot;Elephas maximus&quot; </span></a>
+<a class="sourceLine" id="cb16-15" data-line-number="15"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb16-17" data-line-number="17"><span class="co">#&gt;      Elephas armeniacus       Elephas namadicus            Elephas zulu </span></a>
+<a class="sourceLine" id="cb16-18" data-line-number="18"><span class="co">#&gt;                 7654243                 7654244                 7654245 </span></a>
+<a class="sourceLine" id="cb16-19" data-line-number="19"><span class="co">#&gt;      Elephas bombifrons      Elephas celebensis Palaeoloxodon lomolinoi </span></a>
+<a class="sourceLine" id="cb16-20" data-line-number="20"><span class="co">#&gt;                 3607197                 6144032                 7654246 </span></a>
+<a class="sourceLine" id="cb16-21" data-line-number="21"><span class="co">#&gt;         Elephas maximus </span></a>
+<a class="sourceLine" id="cb16-22" data-line-number="22"><span class="co">#&gt;                  541928</span></a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">get_opentree_species</span>(<span class="dt">ott_id =</span> <span class="dv">541927</span>, <span class="dt">synth_tree_only =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within genus 'Elephas' with OTT id number = 541927.</span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt; * Found the following taxonomic ranks: subspecies, no rank, no rank - terminal, species.</span></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt; * There are 5 subspecies.</span></a>
+<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="co">#&gt; * There are 8 total species.</span></a>
+<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co">#&gt; * There are 7 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="co">#&gt; ---&gt; Returning taxonomic info for 8 species names within genus 'Elephas'.</span></a>
+<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co">#&gt;                   7654243                   7654244                   7654245 </span></a>
+<a class="sourceLine" id="cb17-10" data-line-number="10"><span class="co">#&gt;      &quot;Elephas armeniacus&quot;       &quot;Elephas namadicus&quot;            &quot;Elephas zulu&quot; </span></a>
+<a class="sourceLine" id="cb17-11" data-line-number="11"><span class="co">#&gt;                   3607197                   6144032                   7654246 </span></a>
+<a class="sourceLine" id="cb17-12" data-line-number="12"><span class="co">#&gt;      &quot;Elephas bombifrons&quot;      &quot;Elephas celebensis&quot; &quot;Palaeoloxodon lomolinoi&quot; </span></a>
+<a class="sourceLine" id="cb17-13" data-line-number="13"><span class="co">#&gt;                   3607200                    541928 </span></a>
+<a class="sourceLine" id="cb17-14" data-line-number="14"><span class="co">#&gt;      &quot;Elephas planifrons&quot;         &quot;Elephas maximus&quot; </span></a>
+<a class="sourceLine" id="cb17-15" data-line-number="15"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb17-16" data-line-number="16"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb17-17" data-line-number="17"><span class="co">#&gt;      Elephas armeniacus       Elephas namadicus            Elephas zulu </span></a>
+<a class="sourceLine" id="cb17-18" data-line-number="18"><span class="co">#&gt;                 7654243                 7654244                 7654245 </span></a>
+<a class="sourceLine" id="cb17-19" data-line-number="19"><span class="co">#&gt;      Elephas bombifrons      Elephas celebensis Palaeoloxodon lomolinoi </span></a>
+<a class="sourceLine" id="cb17-20" data-line-number="20"><span class="co">#&gt;                 3607197                 6144032                 7654246 </span></a>
+<a class="sourceLine" id="cb17-21" data-line-number="21"><span class="co">#&gt;      Elephas planifrons         Elephas maximus </span></a>
+<a class="sourceLine" id="cb17-22" data-line-number="22"><span class="co">#&gt;                 3607200                  541928</span></a></code></pre></div>
+<p>To get species for multiple (more than one) taxon names:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">ott_ids &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">541927</span>, <span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co"># </span><span class="al">TODO</span><span class="co">: make a function out of the following code</span></a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co"># then it can replace code inside datelife_query_get_spp, section # getting species</span></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">species_list &lt;-<span class="st"> </span><span class="kw">lapply</span>(ott_ids,</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6">                       <span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb18-7" data-line-number="7">                         datelife<span class="op">::</span><span class="kw">get_opentree_species</span>(<span class="dt">ott_id =</span> x,</a>
+<a class="sourceLine" id="cb18-8" data-line-number="8">                                              <span class="dt">synth_tree_only =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb18-9" data-line-number="9">                        })</a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within genus 'Elephas' with OTT id number = 541927.</span></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="co">#&gt; * Found the following taxonomic ranks: subspecies, no rank, no rank - terminal, species.</span></a>
+<a class="sourceLine" id="cb18-12" data-line-number="12"><span class="co">#&gt; * There are 5 subspecies.</span></a>
+<a class="sourceLine" id="cb18-13" data-line-number="13"><span class="co">#&gt; * There are 8 total species.</span></a>
+<a class="sourceLine" id="cb18-14" data-line-number="14"><span class="co">#&gt; * There are 7 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb18-15" data-line-number="15"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 7 species names within genus 'Elephas' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co">#&gt; ---&gt; Obtaining taxonomic data from lineages within species 'Schidax sp. 'squamaria'' with OTT id number = 100.</span></a>
+<a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co">#&gt; * Found the following taxonomic ranks: species.</span></a>
+<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co">#&gt; * There are 0 subspecies.</span></a>
+<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co">#&gt; * There are 1 total species.</span></a>
+<a class="sourceLine" id="cb18-20" data-line-number="20"><span class="co">#&gt; * There are 1 species in OpenTree's synthetic tree.</span></a>
+<a class="sourceLine" id="cb18-21" data-line-number="21"><span class="co">#&gt; ---&gt; Retrieving taxonomic info for 1 species names within species 'Schidax sp. 'squamaria'' that are in the OpenTree synthetic tree.</span></a>
+<a class="sourceLine" id="cb18-22" data-line-number="22">return_names &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">sapply</span>(species_list, <span class="st">&quot;[&quot;</span>, <span class="st">&quot;tnrs_names&quot;</span>))</a>
+<a class="sourceLine" id="cb18-23" data-line-number="23">return_ott_ids &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">sapply</span>(species_list, <span class="st">&quot;[&quot;</span>, <span class="st">&quot;ott_ids&quot;</span>))</a>
+<a class="sourceLine" id="cb18-24" data-line-number="24"><span class="kw">names</span>(return_names) &lt;-<span class="st"> </span>return_ott_ids</a>
+<a class="sourceLine" id="cb18-25" data-line-number="25"><span class="kw">names</span>(return_ott_ids) &lt;-<span class="st"> </span>return_names</a>
+<a class="sourceLine" id="cb18-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb18-27" data-line-number="27"><span class="kw">list</span>(<span class="dt">tnrs_names =</span> return_names,</a>
+<a class="sourceLine" id="cb18-28" data-line-number="28">     <span class="dt">ott_ids =</span> return_ott_ids)</a>
+<a class="sourceLine" id="cb18-29" data-line-number="29"><span class="co">#&gt; $tnrs_names</span></a>
+<a class="sourceLine" id="cb18-30" data-line-number="30"><span class="co">#&gt;                   7654243                   7654244                   7654245 </span></a>
+<a class="sourceLine" id="cb18-31" data-line-number="31"><span class="co">#&gt;      &quot;Elephas armeniacus&quot;       &quot;Elephas namadicus&quot;            &quot;Elephas zulu&quot; </span></a>
+<a class="sourceLine" id="cb18-32" data-line-number="32"><span class="co">#&gt;                   3607197                   6144032                   7654246 </span></a>
+<a class="sourceLine" id="cb18-33" data-line-number="33"><span class="co">#&gt;      &quot;Elephas bombifrons&quot;      &quot;Elephas celebensis&quot; &quot;Palaeoloxodon lomolinoi&quot; </span></a>
+<a class="sourceLine" id="cb18-34" data-line-number="34"><span class="co">#&gt;                    541928                       100 </span></a>
+<a class="sourceLine" id="cb18-35" data-line-number="35"><span class="co">#&gt;         &quot;Elephas maximus&quot; &quot;Schidax sp. 'squamaria'&quot; </span></a>
+<a class="sourceLine" id="cb18-36" data-line-number="36"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-37" data-line-number="37"><span class="co">#&gt; $ott_ids</span></a>
+<a class="sourceLine" id="cb18-38" data-line-number="38"><span class="co">#&gt;      Elephas armeniacus       Elephas namadicus            Elephas zulu </span></a>
+<a class="sourceLine" id="cb18-39" data-line-number="39"><span class="co">#&gt;                 7654243                 7654244                 7654245 </span></a>
+<a class="sourceLine" id="cb18-40" data-line-number="40"><span class="co">#&gt;      Elephas bombifrons      Elephas celebensis Palaeoloxodon lomolinoi </span></a>
+<a class="sourceLine" id="cb18-41" data-line-number="41"><span class="co">#&gt;                 3607197                 6144032                 7654246 </span></a>
+<a class="sourceLine" id="cb18-42" data-line-number="42"><span class="co">#&gt;         Elephas maximus Schidax sp. 'squamaria' </span></a>
+<a class="sourceLine" id="cb18-43" data-line-number="43"><span class="co">#&gt;                  541928                     100</span></a></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
