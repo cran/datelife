@@ -2,7 +2,7 @@
 % Please edit documentation in R/cacheauthors.R
 \name{make_contributor_cache}
 \alias{make_contributor_cache}
-\title{Create a cache  from Open Tree of Life}
+\title{Create a cache from Open Tree of Life}
 \usage{
 make_contributor_cache(outputfile = "contributorcache.RData")
 }
@@ -13,5 +13,5 @@ make_contributor_cache(outputfile = "contributorcache.RData")
 List containing author and curator results
 }
 \description{
-Create a cache  from Open Tree of Life
+Create a cache from Open Tree of Life
 }

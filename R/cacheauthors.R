@@ -1,5 +1,4 @@
-
-#' Create a cache  from Open Tree of Life
+#' Create a cache from Open Tree of Life
 #' @param outputfile Path including file name
 #' @return List containing author and curator results
 #' @export
@@ -59,6 +58,7 @@ make_contributor_cache <- function(outputfile = "contributorcache.RData") {
 #' Create a cache from TreeBase
 #' @param outputfile Path including file name
 #' @return List containing author and curator results
+#' @export
 make_treebase_cache <- function(outputfile = "treebasecache.RData") { # nocov start
   InvertNames <- function(author) {
     return(paste(sapply(strsplit(author, ", "), rev), collapse = " "))
@@ -105,7 +105,6 @@ make_overlap_table <- function(results_table) {
 
 #' Associate TreeBase authors with studies
 #' @return `data.frame` with author last name, author first and other names, and comma delimited URLs for TreeBase studies
-#'
 make_treebase_associations <- function() {
   all.studies <- treebase::download_metadata("", by = "all")
   unlist(all.studies[[1]])[which(names(unlist(all.studies[[1]])) == "creator")]
@@ -201,7 +200,6 @@ make_otol_associations <- function() {
 #' Find all authors and where they have deposited their trees
 #' @param outputfile Path including file name. NULL to prevent saving.
 #' @return a `data.frame` of "person" and "urls".
-#' @export
 make_all_associations <- function(outputfile = "depositorcache.RData") {
   tb <- make_treebase_associations()
   ot <- make_otol_associations()
